@@ -1,0 +1,80 @@
+---
+title: "Progress Memo 1"
+subtitle: |
+  | Final Project 
+  | Data Science 2 with R (STAT 301-2)
+author: "Brian Dinh"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    
+execute:
+  echo: false
+  warning: false
+
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[This is the link to the GitHub Repository.](https://github.com/stat301-2-2024-winter/final-project-2-BrianDinh26.git)
+
+:::
+
+```{r}
+#| echo: false
+
+# load libraries
+library(tidyverse)
+library(naniar)
+library(here)
+```
+
+
+## Data source
+
+My data source is a used cars dataset from Kirill Lepchenkov on Kaggle.^[[Used Cars Dataset on Kaggle.](https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog/data)]
+
+## Why this data and prediction problem
+My prediction objective is to predict the price of cars using data related to used cars online. This will be a regression problem. Having a model would be useful for this objective because it can help potential car buyers assess if they might be overpaying for a used car. Additionally, I am interested in the used car market because I am trying to buy my first car in the summer through the used car market.
+
+## Data quality & complexity check
+```{r}
+#| echo: true
+# data read-in
+cars <- read_csv(here("data/cars.csv"))
+
+head(cars, n = 5) |> 
+  DT::datatable()
+```
+The used car dataset has 40 variables. Specifically, there are 10 factor variables, 7 numerical variables, and 13 logical variables. There are 38,531 observations.
+
+### Missingness check
+```{r}
+#| echo: true
+
+gg_miss_var(cars)
+```
+Using the `naniar` package, the only variable with missingness is `engine_capacity`, but only 10 instances are missing out of 38,531 total observations, meaning it is not highly significant.
+
+## Potential data issues
+```{r}
+#| echo: false
+
+cars |>
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  labs(x = "Price (USD)",
+       y = "Density",
+       title = "Density Plot of Price (USD)") +
+  theme_classic()
+```
+Based on the following density plot, it seems that there is a right skew on car prices. There does not appear to be missingness issues. To deal with the right skew, I can transform the dataset using a log transformation. Additionally, I can remove outliers, because the majority of the prices are from the price range of $0 to $15,000.
+

@@ -1,7 +1,5 @@
 # load packages ----
 library(tidyverse)
-library(tidymodels)
-library(here)
 library(naniar)
 
 # handle common conflicts
@@ -12,7 +10,7 @@ cars <- read_csv("data/cars.csv")
 
 gg_miss_var(cars)
 
-# appears to be missingness with engine_capacity, but they are only for 10 instances out of 38,351 observations
+# appears to be missingness with engine_capacity, but they are only for 10 instances out of 38,531 observations
 # so not significant.
 
 cars |>
@@ -30,3 +28,5 @@ cars |>
   labs(x = "Price (USD)",
        y = "Density") +
   theme_classic()
+
+#consider removing outliers.
