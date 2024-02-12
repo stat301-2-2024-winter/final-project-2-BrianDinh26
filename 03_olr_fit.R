@@ -32,7 +32,7 @@ lm_wflow <-
 
 # fit workflows/models ----
 set.seed(925)
-lm_fit <- fit(lm_wflow, abalone_train)
+lm_fit <- fit(lm_wflow, cars_train)
 
 # save out results
 save(lm_fit, file = "results/olr_fit.rda")

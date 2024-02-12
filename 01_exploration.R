@@ -30,14 +30,15 @@ cars <- read_csv("data/cars.csv") |>
 
 cars$engine_fuel[cars$engine_fuel == "gasoline"] <- "gas"
 
-class(cars$engine_has_gas)
+sd_log <- sd(cars$log_price_usd)
+sd_mean <- mean(cars$log_price_usd)
 
-gg_miss_var(cars)
+cars_data_clean <- cars |> 
+  filter(
+    !(log_price_usd > (sd_log * 2 + sd_mean) | log_price_usd < (sd_mean - sd_log * 2))
+  )
 
-# appears to be missingness with engine_capacity, but they are only for 10 instances out of 38,531 observations
-# so not significant.
-
-# code below will be cleaned later.
+# data exploration
 
 cars |>
   ggplot(aes(x = price_usd)) +
@@ -52,16 +53,7 @@ cars |>
   labs(x = "Price (USD)",
        y = "Density") +
   theme_classic()
-#consider removing outliers.
-summary(cars$price_usd)
 
-sd_log <- sd(cars$log_price_usd)
-sd_mean <- mean(cars$log_price_usd)
-
-cars_data_clean <- cars |> 
-  filter(
-    !(log_price_usd > (sd_log * 2 + sd_mean) | log_price_usd < (sd_mean - sd_log * 2))
-  )
 
 cars_data_clean |>
   ggplot(aes(x = log_price_usd)) +
@@ -80,9 +72,6 @@ cars_data_clean |>
   labs(x = "Price (USD)",
        y = "Density") +
   theme_classic()
-# still skewed but much less than before.
-
-# consider imputing engine capacity in the recipe.
 
 # split the data
 set.seed(925)

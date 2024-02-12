@@ -19,6 +19,7 @@ standard_recipe <- recipe(log_price_usd ~ .,
                           data = cars_train) |> 
   step_rm(manufacturer_name, model_name, color, location_region, price_usd) |> 
   step_dummy(all_nominal_predictors()) |> 
+  step_impute_linear(engine_capacity) |> 
   step_normalize()
 
 prep(standard_recipe) |> 
