@@ -7,6 +7,8 @@ library(here)
 # handle common conflicts
 tidymodels_prefer()
 
+# note: need to add the cleaning for gas type, gasoline = gas but they're counted differently
+
 # data read-in
 cars <- read_csv("data/cars.csv") |> 
   mutate(
@@ -24,6 +26,8 @@ cars <- read_csv("data/cars.csv") |>
     feature_8 = ordered(factor(feature_8)),
     feature_9 = ordered(factor(feature_9))
   )
+
+cars$engine_fuel[cars$engine_fuel == "gasoline"] <- "gas"
 
 class(cars$engine_has_gas)
 
