@@ -39,6 +39,7 @@ cars_data_clean <- cars |>
     !(log_price_usd > (sd_log * 2 + sd_mean) | log_price_usd < (sd_mean - sd_log * 2))
   )
 
+
 # data exploration
 
 cars |>
@@ -80,6 +81,12 @@ cars_split <- initial_split(cars_data_clean, prop = 0.80, strata = log_price_usd
 cars_train <- training(cars_split)
 cars_test <- testing(cars_split)
 
+# resampling
+set.seed(925)
+cars_folds <- vfold_cv(cars_train, v = 3, repeats = 5,
+                       strata = log_price_usd)
+
+
 # write out results
-save(cars_train, cars_test, file = here("results/cars_split.rda"))
+save(cars_train, cars_test, cars_folds, file = here("results/cars_split.rda"))
 

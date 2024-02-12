@@ -30,8 +30,10 @@ lm_wflow <-
   add_recipe(standard_recipe)
 
 # fit workflows/models ----
+# need to add resampling method.
 set.seed(925)
-lm_fit <- fit(lm_wflow, cars_train)
+lm_fit <- fit_resamples(lm_wflow, 
+                        resamples = cars_folds)
 
 # save out results
 save(lm_fit, file = here("results/olr_fit.rda"))
