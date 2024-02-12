@@ -13,6 +13,7 @@ tidymodels_prefer()
 cars <- read_csv("data/cars.csv") |> 
   mutate(
     log_price_usd = log(price_usd),
+    has_warranty = ordered(factor(has_warranty)),
     engine_has_gas = ordered(factor(engine_has_gas)),
     is_exchangeable = ordered(factor(is_exchangeable)),
     feature_0 = ordered(factor(feature_0)),
@@ -70,6 +71,10 @@ cars_data_clean |>
   theme_classic()
 
 cars_data_clean |>
+  ggplot(aes(x = duration_listed)) +
+  geom_histogram()
+
+cars_data_clean |>
   ggplot(aes(x = log_price_usd)) +
   geom_density() +
   labs(x = "Price (USD)",
@@ -87,3 +92,4 @@ cars_test <- testing(cars_split)
 
 # write out results
 save(cars_train, cars_test, file = here("results/cars_split.rda"))
+
