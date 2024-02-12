@@ -83,7 +83,7 @@ cars_test <- testing(cars_split)
 
 # resampling
 set.seed(925)
-cars_folds <- vfold_cv(cars_train, v = 3, repeats = 5,
+cars_folds <- vfold_cv(cars_train, v = 10, repeats = 5,
                        strata = log_price_usd)
 
 
