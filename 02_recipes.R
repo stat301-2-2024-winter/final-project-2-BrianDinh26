@@ -19,7 +19,6 @@ standard_recipe <- recipe(log_price_usd ~ .,
                           data = cars_train) |> 
   step_rm(manufacturer_name, model_name, color, location_region, price_usd) |> 
   step_dummy(all_nominal_predictors()) |> 
-  step_impute_linear(engine_capacity) |> 
   step_normalize()
 
 prep(standard_recipe) |> 
@@ -31,6 +30,7 @@ prep(standard_recipe) |>
 rf_recipe <- recipe(log_price_usd ~.,
                     data = cars_train) |> 
   step_rm(manufacturer_name, model_name, color, location_region, price_usd) |> 
+  step_impute_knn(engine_capacity) |> 
   step_dummy(all_nominal_predictors(), one_hot = TRUE) |> 
   step_normalize(all_predictors())
 
@@ -39,7 +39,7 @@ prep(rf_recipe) |>
   head(n = 5) |> 
   DT::datatable()
 
-# model types include olr...
+# need at lesat six model types
 
 save(standard_recipe, rf_recipe, file = here("recipes/recipes.rda"))
 

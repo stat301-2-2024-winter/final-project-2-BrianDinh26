@@ -2,7 +2,6 @@
 # Define and fit ordinary linear regression model.
 # We use a random process when fitting, so we have to set a seed beforehand.
 
-
 # load packages ----
 library(tidyverse)
 library(tidymodels)
@@ -35,4 +34,4 @@ set.seed(925)
 lm_fit <- fit(lm_wflow, cars_train)
 
 # save out results
-save(lm_fit, file = "results/olr_fit.rda")
+save(lm_fit, file = here("results/olr_fit.rda"))

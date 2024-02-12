@@ -33,6 +33,7 @@ cars$engine_fuel[cars$engine_fuel == "gasoline"] <- "gas"
 sd_log <- sd(cars$log_price_usd)
 sd_mean <- mean(cars$log_price_usd)
 
+# remove outliers
 cars_data_clean <- cars |> 
   filter(
     !(log_price_usd > (sd_log * 2 + sd_mean) | log_price_usd < (sd_mean - sd_log * 2))
