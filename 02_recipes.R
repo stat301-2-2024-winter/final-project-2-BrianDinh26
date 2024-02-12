@@ -17,11 +17,10 @@ load(here("results/cars_split.rda"))
 #need to work on the integrity of the recipe
 standard_recipe <- recipe(log_price_usd ~ .,
                           data = cars_train) |> 
-  step_rm(manufacturer_name, model_name, color, location_region, price_usd, engine_type) |> 
-  step_impute_knn(engine_capacity) |> 
+  step_rm(manufacturer_name, model_name, color, location_region, price_usd, engine_type, engine_capacity) |> 
   step_dummy(all_nominal_predictors()) |> 
   step_normalize() |> 
-  step_zv(all_predictors())
+  step_naomit(all_predictors())
 
 prep(standard_recipe) |> 
   bake(new_data = NULL) |> 

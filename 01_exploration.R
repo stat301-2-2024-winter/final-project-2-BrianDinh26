@@ -75,6 +75,8 @@ cars_data_clean |>
        y = "Density") +
   theme_classic()
 
+gg_miss_var(cars_data_clean)
+
 # split the data
 set.seed(925)
 cars_split <- initial_split(cars_data_clean, prop = 0.80, strata = log_price_usd)
