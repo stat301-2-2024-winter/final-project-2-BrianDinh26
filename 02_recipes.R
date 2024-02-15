@@ -17,31 +17,16 @@ load(here("results/cars_split.rda"))
 #need to work on the integrity of the recipe
 standard_recipe <- recipe(log_price_usd ~ .,
                           data = cars_train) |> 
-  step_rm(manufacturer_name, model_name, color, location_region, price_usd, engine_type, engine_capacity) |> 
-  step_dummy(all_nominal_predictors()) |> 
-  step_normalize() |> 
-  step_naomit(all_predictors())
+  step_rm(price_usd, model_name) |> 
+  step_dummy(all_nominal_predictors(), one_hot = TRUE) |> 
+  step_zv(all_predictors()) |> 
+  step_normalize(all_predictors())
 
 prep(standard_recipe) |> 
   bake(new_data = NULL) |> 
   head(n = 5) |> 
   DT::datatable()
 
-# random forest recipe.
-rf_recipe <- recipe(log_price_usd ~.,
-                    data = cars_train) |> 
-  step_rm(manufacturer_name, model_name, color, location_region, price_usd, engine_type) |> 
-  step_impute_knn(engine_capacity) |> 
-  step_dummy(all_nominal_predictors(), one_hot = TRUE) |> 
-  step_normalize(all_predictors()) |> 
-  step_zv(all_predictors())
-
-prep(rf_recipe) |> 
-  bake(new_data = NULL) |> 
-  head(n = 5) |> 
-  DT::datatable()
-
 # need at lesat six model types
 
-save(standard_recipe, rf_recipe, file = here("recipes/recipes.rda"))
-
+save(standard_recipe, file = here("recipes/recipes.rda"))
