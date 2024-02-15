@@ -14,6 +14,13 @@ load(here("results/cars_split.rda"))
 #i have to make all the logical variables into factor variables...
 #possibly use thresholds?
 
+#better recipe...
+better_recipe <- recipe(price_usd ~ .,
+                  data = cars_train) |> 
+  step_dummy(all_nominal_predictors(), one_hot = TRUE) |> 
+  step_zv(all_predictors()) |> 
+  step_normalize(all_predictors())
+
 #need to work on the integrity of the recipe
 standard_recipe <- recipe(log_price_usd ~ .,
                           data = cars_train) |> 

@@ -30,7 +30,12 @@ cars <- read_csv(here("data/cars.csv")) |>
     feature_9 = (factor(feature_9))
   )
 
-cars$engine_fuel[cars$engine_fuel == "gasoline"] <- "gas"
+# another data read-in
+cars <- read_csv(here("data/cars.csv")) |> 
+  mutate(
+    price_usd = log(price_usd))
+
+#cars$engine_fuel[cars$engine_fuel == "gasoline"] <- "gas"
 
 # data exploration
 
@@ -53,14 +58,14 @@ gg_miss_var(cars)
 
 # split the data
 set.seed(925)
-cars_split <- initial_split(cars, prop = 0.80, strata = log_price_usd)
+cars_split <- initial_split(cars, prop = 0.80, strata = price_usd)
 cars_train <- training(cars_split)
 cars_test <- testing(cars_split)
 
 # resampling
 set.seed(925)
 cars_folds <- vfold_cv(cars_train, v = 10, repeats = 5,
-                       strata = log_price_usd)
+                       strata = price_usd)
 
 
 # write out results

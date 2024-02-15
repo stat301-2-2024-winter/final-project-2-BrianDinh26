@@ -37,3 +37,7 @@ lm_fit <- fit_resamples(lm_wflow,
 
 # save out results
 save(lm_fit, file = here("results/olr_fit.rda"))
+
+load(here("results/olr_fit.rda"))
+
+lm_fit |> collect_metrics()
