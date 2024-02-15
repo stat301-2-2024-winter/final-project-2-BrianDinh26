@@ -15,6 +15,7 @@ load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("recipes/recipes.rda"))
+load(here("recipes/olr_recipe.rda"))
 
 set.seed(925)
 # model specifications ----
@@ -27,17 +28,21 @@ lm_spec <-
 lm_wflow <-
   workflow() |> 
   add_model(lm_spec) |> 
-  add_recipe(standard_recipe)
+  add_recipe(olr_recipe)
 
 # fit workflows/models ----
 # need to add resampling method.
 set.seed(925)
-lm_fit <- fit_resamples(lm_wflow, 
+olr_lm_fit <- fit_resamples(lm_wflow, 
                         resamples = cars_folds)
 
+
+
 # save out results
+save(olr_lm_fit, file = here("results/olr_lm_fit.rda"))
+
 save(lm_fit, file = here("results/olr_fit.rda"))
 
 load(here("results/olr_fit.rda"))
 
-lm_fit |> collect_metrics()
+olr_lm_fit |> collect_metrics()

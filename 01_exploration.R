@@ -14,26 +14,21 @@ tidymodels_prefer()
 # data read-in
 cars <- read_csv(here("data/cars.csv")) |> 
   mutate(
-    log_price_usd = log(price_usd),
+    price_usd = log(price_usd),
     has_warranty = (factor(has_warranty)),
     engine_has_gas = (factor(engine_has_gas)),
     is_exchangeable = (factor(is_exchangeable)),
-    feature_0 = factor(feature_0),
-    feature_1 = (factor(feature_1)),
-    feature_2 = (factor(feature_2)),
-    feature_3 = (factor(feature_3)),
-    feature_4 = (factor(feature_4)),
-    feature_5 = (factor(feature_5)),
-    feature_6 = (factor(feature_6)),
-    feature_7 = (factor(feature_7)),
-    feature_8 = (factor(feature_8)),
-    feature_9 = (factor(feature_9))
+    feature_0 = as.factor(feature_0),
+    feature_1 = factor(feature_1),
+    feature_2 = factor(feature_2),
+    feature_3 = factor(feature_3),
+    feature_4 = factor(feature_4),
+    feature_5 = factor(feature_5),
+    feature_6 = factor(feature_6),
+    feature_7 = factor(feature_7),
+    feature_8 = factor(feature_8),
+    feature_9 = factor(feature_9)
   )
-
-# another data read-in
-cars <- read_csv(here("data/cars.csv")) |> 
-  mutate(
-    price_usd = log(price_usd))
 
 #cars$engine_fuel[cars$engine_fuel == "gasoline"] <- "gas"
 
