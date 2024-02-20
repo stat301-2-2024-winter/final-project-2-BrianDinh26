@@ -36,3 +36,5 @@ rf_fit <- fit(rf_workflow, cars_train)
 
 # save out results
 save(rf_fit, file = here("results/rf_fit.rda"))
+
+rf_fit
