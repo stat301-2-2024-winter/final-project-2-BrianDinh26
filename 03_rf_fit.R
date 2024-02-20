@@ -7,6 +7,14 @@ library(tidyverse)
 library(tidymodels)
 library(here)
 
+# mac user code for parallel processing
+library(doMC)
+
+# set up parallel processing
+num_cores <- parallel::detectCores(logical = TRUE)
+
+registerDoMC(cores = num_cores)
+
 # handle common conflicts
 tidymodels_prefer()
 
@@ -32,9 +40,13 @@ rf_workflow <-
 
 # fit workflows/models ----
 set.seed(925)
-rf_fit <- fit(rf_workflow, cars_train)
+rf_fit <- fit_resamples(rf_workflow, 
+                        resamples = cars_folds,
+                        control = control_resamples(save_workflow = TRUE))
 
 # save out results
 save(rf_fit, file = here("results/rf_fit.rda"))
 
-rf_fit
+load(here("results/rf_fit.rda"))
+
+rf_fit |> collect_metrics()
