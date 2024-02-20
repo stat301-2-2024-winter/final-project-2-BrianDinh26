@@ -47,4 +47,5 @@ save(null_fit, file = here("results/null_fit.rda"))
 
 load(file = here("results/null_fit.rda"))
 
-null_fit |> collect_metrics()
+null_fit |> collect_metrics() |> 
+  filter(.metric == 'rmse')

@@ -34,14 +34,29 @@ citation-location: margin
 # load libraries
 library(tidyverse)
 library(here)
+
+# load results
+load(file = here("results/pm_2_table.rda"))
 ```
 
 
-## Analysis Plan
 
-## Model Fitting Progress
+## Analysis Plan and General Progress Summary
+  For the dataset^[Kirill Lepchenkov's Used Cars Dataset ([see website](https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog/data))], I used an 80/20 split because I believe that with 38,351 observations, there were enough observations to justify having this split, since it is not a small dataset. I used a v-fold cross validation resampling method, with 10 sets of performance metrics and 5 repetitions and the strata being the U.S. dollar price of the car, untransformed. 
+  
+  At the moment, I plan on creating two recipes. The first recipe will be a kitchen sink recipe, which will act as a baseline recipe to use on models to get a general sense of where the metrics can be improved. The second recipe will be a data exploration influenced recipe, which will involve analyzing the variables in the dataset and modifying them through adding steps that can transform the data, inform of a relationship between variables, and more. Based on the performance of the second recipe, which will be created for the final project, I may add another recipe if there appears to be differences in success with certain recipes between models. After these recipes are made, I will fit them onto the models, with the more complex models being tuned for specific variables, and analyze the success of each model relative to one another, which will allow me to decide on a final model to tune and analyze by the end of this final project.
+  
+```{r}
+#| echo: false
+#| tbl-cap: RMSE metrics for null model and the baseline model (ordinary linear regression).
+#| label: tbl-comparison
 
-## General Progress Summary
+pm_2_table |> 
+  knitr::kable(digits = c(NA, NA, 3, NA, 5))
+```
+
+  The two models that have been defined and fitted to the resamples so far are the null model and the ordinary linear regression model. Both of these models use a kitchen sink recipe and run functionally. The RMSEs of the two models can be seen in the table below, with the RMSE of the ordinary linear regression being much lower than that of the null model, as seen in @tbl-comparison. In addition to these models, I plan on training a k-nearest neighbors model, a random forest model, and a boosted tree model, all with tuned hyperparameters.
+
 
 ## Next Steps
-
+After this progress memo, I plan on first fitting the rest of models I want to use with tuned hyperparameters and the kitchen sink recipe, just to make sure there are no issues with fitting with the current recipe. Then, I will compare the results of each model with the baseline kitchen sink recipe before doing an exploratory data analysis to create what I think will be a stronger, feature engineered recipe. After working on the feature engineered recipe and comparing possible recipes using the null model, I will use the best recipe out of those I tested on the rest of models, and compare those results with the model results of the kitchen sink recipe-based fits. From there, I will decide on the best model and analyze how it does against the test split.

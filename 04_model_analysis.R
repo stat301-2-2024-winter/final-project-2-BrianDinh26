@@ -20,7 +20,30 @@ tidymodels_prefer()
 # load training data
 load(here("results/cars_split.rda"))
 
+# load fit data
+load(file = here("results/null_fit.rda"))
+load(file = here("results/olr_lm_fit.rda"))
 
+
+# combine initial table for progress memo #2
+table_null <- null_fit |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "null")
+
+table_olr <- olr_lm_fit |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "olr")
+
+pm_2_table <- bind_rows(table_null, table_olr) |> 
+  select(model, .metric, mean, n, std_err) |> 
+  rename(
+    Model = model,
+    Metric = .metric,
+    Mean = mean,
+    "Number of Trainings" = n,
+    "Standard Error" = std_err
+  )
 
 # save out results
+save(pm_2_table, file = here("results/pm_2_table.rda"))
 
