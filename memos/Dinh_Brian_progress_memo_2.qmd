@@ -1,0 +1,47 @@
+---
+title: "Progress Memo 2"
+subtitle: |
+  | Final Project 
+  | Data Science 2 with R (STAT 301-2)
+author: "Brian Dinh"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    
+execute:
+  echo: false
+  warning: false
+
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[This is the link to the GitHub Repository.](https://github.com/stat301-2-2024-winter/final-project-2-BrianDinh26.git)
+
+:::
+
+```{r}
+#| echo: false
+
+# load libraries
+library(tidyverse)
+library(here)
+```
+
+
+## Analysis Plan
+
+## Model Fitting Progress
+
+## General Progress Summary
+
+## Next Steps
+
