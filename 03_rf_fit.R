@@ -15,11 +15,12 @@ load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("recipes/recipes.rda"))
+load(here("recipes/olr_recipes.rda"))
 
 set.seed(925)
 # model specifications ----
 rf_spec <- 
-  rand_forest(min_n = 15, trees = 800) |> 
+  rand_forest() |> 
   set_engine("ranger") |> 
   set_mode("regression")
 
