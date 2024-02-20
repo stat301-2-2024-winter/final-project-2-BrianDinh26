@@ -1,5 +1,5 @@
 # Final Project, Brian Dinh ----
-# Define and fit a random forest model.
+# Define and fit a k-nearest neighbors model.
 # We use a random process when fitting, so we have to set a seed beforehand.
 
 # load packages ----
@@ -22,30 +22,17 @@ tidymodels_prefer()
 load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("recipes/sink_recipe.rda"))
+
 
 set.seed(925)
 # model specifications ----
-rf_spec <- 
-  rand_forest() |> 
-  set_engine("ranger") |> 
-  set_mode("regression")
+
 
 # define workflows ----
-rf_workflow <-
-  workflow() |> 
-  add_model(rf_spec) |> 
-  add_recipe(sink_recipe)
 
 # fit workflows/models ----
 set.seed(925)
-rf_fit <- fit_resamples(rf_workflow, 
-                        resamples = cars_folds,
-                        control = control_resamples(save_workflow = TRUE))
+
 
 # save out results
-save(rf_fit, file = here("results/rf_fit.rda"))
 
-load(here("results/rf_fit.rda"))
-
-rf_fit |> collect_metrics()

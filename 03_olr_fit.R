@@ -14,7 +14,7 @@ tidymodels_prefer()
 load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("recipes/recipes.rda"))
+load(here("recipes/sink_recipe.rda"))
 
 set.seed(925)
 # model specifications ----
@@ -27,15 +27,13 @@ lm_spec <-
 lm_wflow <-
   workflow() |> 
   add_model(lm_spec) |> 
-  add_recipe(olr_recipe)
+  add_recipe(sink_recipe)
 
 # fit workflows/models ----
 set.seed(925)
 olr_lm_fit <- fit_resamples(lm_wflow, 
                         resamples = cars_folds,
                         control = control_resamples(save_workflow = TRUE))
-
-
 
 # save out results
 save(olr_lm_fit, file = here("results/olr_lm_fit.rda"))
