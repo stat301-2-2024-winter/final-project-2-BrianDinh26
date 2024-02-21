@@ -1,7 +1,7 @@
 ---
 title: "Progress Memo 2"
 subtitle: |
-  | Final Project 
+  | Final Project: Analysis of Online Car Sales
   | Data Science 2 with R (STAT 301-2)
 author: "Brian Dinh"
 date: today
