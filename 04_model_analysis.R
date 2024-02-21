@@ -35,12 +35,11 @@ table_olr <- olr_lm_fit |> collect_metrics() |>
   mutate(model = "olr")
 
 pm_2_table <- bind_rows(table_null, table_olr) |> 
-  select(model, .metric, mean, n, std_err) |> 
+  select(model, .metric, mean, std_err) |> 
   rename(
     Model = model,
     Metric = .metric,
     Mean = mean,
-    "Number of Trainings" = n,
     "Standard Error" = std_err
   )
 

@@ -52,7 +52,7 @@ load(file = here("results/pm_2_table.rda"))
 #| label: tbl-comparison
 
 pm_2_table |> 
-  knitr::kable(digits = c(NA, NA, 3, NA, 5))
+  knitr::kable(digits = c(NA, NA, 4, 6))
 ```
 
   The two models that have been defined and fitted to the resamples so far are the null model and the ordinary linear regression model. Both of these models use a kitchen sink recipe and run functionally. The RMSEs of the two models can be seen in the table below, with the RMSE of the ordinary linear regression being much lower than that of the null model, as seen in @tbl-comparison. In addition to these models, I plan on training a k-nearest neighbors model, a random forest model, and a boosted tree model, all with tuned hyperparameters.
