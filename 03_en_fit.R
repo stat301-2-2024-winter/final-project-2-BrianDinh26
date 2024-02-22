@@ -22,17 +22,39 @@ tidymodels_prefer()
 load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-
+load(here("recipes/sink_recipe.rda"))
 
 set.seed(925)
 # model specifications ----
+elastic_spec <-
+  linear_reg(penalty = tune(),
+             mixture = penalty()) |> 
+  set_engine("glmnet") |> 
+  set_mode("regression")
 
 
 # define workflows ----
+elastic_workflow <- workflow() |> 
+  add_model(elastic_spec) |> 
+  add_recipe(sink_recipe)
+
+# set hyperparameters (for later tuning)
+elastic_params <- hardhat::extract_parameter_set_dials(elastic_spec)
+
+# grid
+elastic_grid <- grid_regular(elastic_params, levels = 5)
 
 # fit workflows/models ----
 set.seed(925)
+tuned_elastic <- tune_grid(elastic_workflow,
+                       cars_folds,
+                       grid = elastic_grid,
+                       control = control_grid(save_workflow = TRUE))
+
+# write out results (fitted/trained workflows) ----
+save(tuned_elastic, file = here("results/tuned_elastic.rda"))
 
 
+tuned_elastic |> collect_metrics()
 # save out results
 
