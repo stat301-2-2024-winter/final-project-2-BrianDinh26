@@ -18,6 +18,7 @@ The goals for this project is to create a regression model to predict prices of 
 - `03_null_fit`: Define a null model and workflow, fit it to dataset.
 - `03_olr_fit`: Define an ordinary linaer regression model and workflow, fit it to the dataset.
 - `03_rf_fit`:  Define a random forest model, define a random forest model workflow, tune the hyperparameters for the random forest model, build tuning grid, and fit the random forest model.
+- `03_en_fit`: Define an elastic net model, define it, tune the hyperparameters for it, build tuning grid, and fit the elastic net model.
 - `04_model_analysis`:  Explore the  models and compare results to find the final, best model.
 - `05_train_final_model`: After finding the final, best model, train it.
 - `06_assess_final_model`: Assess final model.
