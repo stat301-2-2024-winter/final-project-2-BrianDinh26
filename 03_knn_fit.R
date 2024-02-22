@@ -22,7 +22,7 @@ tidymodels_prefer()
 load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("recipes/sink_recipe.rda"))
+load(here("recipes/tree_recipe.rda"))
 
 set.seed(925)
 # model specifications ----
@@ -35,7 +35,7 @@ knn_spec <-
 # define workflows ----
 knn_workflow <- workflow() |> 
   add_model(knn_spec) |> 
-  add_recipe(sink_recipe)
+  add_recipe(tree_recipe)
 
 # check hyperparameters
 knn_params <- hardhat::extract_parameter_set_dials(knn_spec)

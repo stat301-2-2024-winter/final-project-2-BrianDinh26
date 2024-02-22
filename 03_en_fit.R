@@ -28,7 +28,7 @@ set.seed(925)
 # model specifications ----
 elastic_spec <-
   linear_reg(penalty = tune(),
-             mixture = penalty()) |> 
+             mixture = tune()) |> 
   set_engine("glmnet") |> 
   set_mode("regression")
 
@@ -53,8 +53,4 @@ tuned_elastic <- tune_grid(elastic_workflow,
 
 # write out results (fitted/trained workflows) ----
 save(tuned_elastic, file = here("results/tuned_elastic.rda"))
-
-
-tuned_elastic |> collect_metrics()
-# save out results
 
