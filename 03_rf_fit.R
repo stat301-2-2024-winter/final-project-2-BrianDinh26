@@ -27,20 +27,36 @@ load(here("recipes/sink_recipe.rda"))
 set.seed(925)
 # model specifications ----
 rf_spec <- 
-  rand_forest() |> 
-  set_engine("ranger") |> 
-  set_mode("regression")
+  rand_forest(
+    mode = "regression",
+    trees = 1000, 
+    min_n = tune(),
+    mtry = tune()
+  ) |> 
+  set_engine("ranger")
 
 # define workflows ----
 rf_workflow <-
   workflow() |> 
   add_model(rf_spec) |> 
-  add_recipe(sink_recipe)
+  add_recipe(tree_recipe)
+
+# check ranges for hyperparameters
+hardhat::extract_parameter_set_dials(rf_spec)
+
+# change hyperparameter ranges (for later tuning)
+rf_params <- parameters(rf_spec) |> 
+  update(mtry = mtry(c(1, 14))) |> 
+  update(min_n = min_n(c(2, 40)))
+
+# build tuning grid
+rf_grid <- tune_grid(rf_params, levels = 5)
 
 # fit workflows/models ----
 set.seed(925)
 rf_fit <- fit_resamples(rf_workflow, 
                         resamples = cars_folds,
+                        grid = rf_grid,
                         control = control_resamples(save_workflow = TRUE))
 
 # save out results
