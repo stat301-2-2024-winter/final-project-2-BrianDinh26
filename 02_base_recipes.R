@@ -14,13 +14,13 @@ load(here("results/cars_split.rda"))
 # kitchen sink recipe
 sink_recipe <- recipe(price_usd ~ .,
                      data = cars_train) |> 
-  step_rm(model_name, location_region, model_name, engine_fuel) |> 
-  step_dummy(all_nominal_predictors()) |> # DO NOT ONE HOT ENCODE FOR REGRESSION
+  step_rm(model_name, location_region, engine_fuel) |> 
+  step_dummy(all_nominal_predictors()) |>
   step_impute_knn(engine_capacity) |> 
   step_zv(all_predictors()) |> 
   step_normalize(all_predictors())
 
-# tree-based recipe (knn, bt, rf)
+# tree-based kitchen sink recipe (knn, bt, rf)
 tree_recipe <- recipe(price_usd ~ .,
                       data = cars_train) |> 
   step_rm(model_name, location_region, model_name, engine_fuel) |> 

@@ -3,6 +3,8 @@ library(tidyverse)
 library(tidymodels)
 library(naniar)
 library(here)
+library(corrr)
+
 
 # handle common conflicts
 tidymodels_prefer()
@@ -30,25 +32,6 @@ cars <- read_csv(here("data/cars.csv")) |>
     feature_9 = factor(feature_9)
   )
 
-#cars$engine_fuel[cars$engine_fuel == "gasoline"] <- "gas"
-
-# data exploration
-
-cars |>
-  ggplot(aes(x = price_usd)) +
-  geom_density() +
-  labs(x = "Price (USD)",
-       y = "Density") +
-  theme_classic()
-
-cars |>
-  ggplot(aes(x = log_price_usd)) +
-  geom_histogram() +
-  labs(x = "Log Price (USD)",
-       y = "Density") +
-  theme_classic()
-
-
 gg_miss_var(cars)
 
 # split the data
@@ -62,7 +45,47 @@ set.seed(925)
 cars_folds <- vfold_cv(cars_train, v = 10, repeats = 5,
                        strata = price_usd)
 
-
 # write out results
 save(cars_train, cars_test, cars_folds, file = here("results/cars_split.rda"))
+
+
+# data exploration
+
+cars_train |>
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  labs(x = "Price (USD)",
+       y = "Density") +
+  theme_classic()
+
+cars_train |>
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  labs(x = "Price (USD)",
+       y = "Density") +
+  theme_classic()
+
+cars_train |> 
+  ggplot(aes(x = engine_capacity)) +
+  geom_histogram() +
+  facet_wrap(~ state)
+
+cars_train |> 
+  ggplot(aes(y = duration_listed, x = price_usd )) +
+  geom_point()
+
+cars_train_corr <- cars_train |> 
+  correlate()
+#seems that there's significance in year made and listing price.
+
+cars_train |> 
+  ggplot(aes(x = year_produced, y = price_usd)) +
+  geom_point() +
+  facet_wrap(~ engine_type)
+
+cars_train |> 
+  ggplot(aes(x = number_of_photos)) +
+  geom_density() +
+  facet_wrap(~ is_exchangeable)
+
 
