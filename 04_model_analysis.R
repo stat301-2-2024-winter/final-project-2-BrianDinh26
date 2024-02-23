@@ -51,9 +51,22 @@ table_elastic <- tuned_elastic |> collect_metrics() |>
   filter(.metric == 'rmse') |> 
   mutate(model = "elastic")
 
-table_elastic <- tuned_knn |> collect_metrics() |> 
+table_knn <- tuned_knn |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
   mutate(model = "knn")
+
+kitchen_sink_metric_table <- bind_rows(table_null, table_olr, table_rf,
+                                       table_bt, table_elastic, table_knn) |> 
+  slice_min(mean, by = model) |> 
+  arrange(mean) |> 
+  select(model, .metric, mean, std_err) |> 
+  rename(
+    Model = model,
+    Metric = .metric,
+    Mean = mean,
+    "Standard Error" = std_err
+  ) |> 
+  distinct(Model, .keep_all = TRUE)
 
 pm_2_table <- bind_rows(table_null, table_olr) |> 
   select(model, .metric, mean, std_err) |> 
