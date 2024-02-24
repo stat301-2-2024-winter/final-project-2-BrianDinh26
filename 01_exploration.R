@@ -4,6 +4,7 @@ library(tidymodels)
 library(naniar)
 library(here)
 library(corrr)
+library(splines)
 
 
 # handle common conflicts
@@ -71,7 +72,7 @@ cars_train |>
   facet_wrap(~ state)
 
 cars_train |> 
-  ggplot(aes(y = duration_listed, x = price_usd )) +
+  ggplot(aes(y = odometer_value, x = price_usd )) +
   geom_point()
 
 cars_train_corr <- cars_train |> 
@@ -87,5 +88,9 @@ cars_train |>
   ggplot(aes(x = number_of_photos)) +
   geom_density() +
   facet_wrap(~ is_exchangeable)
+
+cars_train |> 
+  ggplot(aes(x = log(odometer_value))) +
+  geom_density()
 
 

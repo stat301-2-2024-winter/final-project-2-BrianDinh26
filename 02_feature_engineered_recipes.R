@@ -15,13 +15,20 @@ load(here("results/cars_split.rda"))
 # feature engineered recipe for regression
 engineered_reg_recipe <- recipe(price_usd ~ .,
                       data = cars_train) |> 
-  step_rm(model_name, location_region, model_name, engine_fuel) |> 
+  step_rm(model_name, location_region, engine_fuel) |> 
   step_dummy(all_nominal_predictors()) |>
   step_impute_knn(engine_capacity) |> 
-  step_interact(terms = ~starts_with("price_usd"):year_produced) |>
+  step_log(engine_capacity, number_of_photos) |> 
+  #step_interact(terms = ~starts_with("price_usd"):year_produced) |>
   step_interact(terms = ~starts_with("duration_listed"):up_counter) |>
+  step_interact(terms = ~starts_with("is_exchangeable"):price_usd) |>
+  step_interact(terms = ~starts_with("duration_listed"):number_of_photos) |>
+  step_interact(terms = ~starts_with("odometer_value"):year_produced)  |> 
+  step_interact(terms = ~starts_with("drivetrain"):price_usd)  |> 
   step_zv(all_predictors()) |> 
   step_normalize(all_predictors())
+
+# price usd and year produced overfits the model too much
 
 prep(engineered_reg_recipe) |> 
   bake(new_data = NULL) |> 
@@ -45,5 +52,16 @@ test_null_fit <- null_workflow |>
     resamples = cars_folds
   )
 
-test_null_fit |> collect_metrics()
+test_null_fit |> 
+  collect_metrics()
+
+hey <- test_null_fit |> collect_metrics()
+#baseline is 1.0274980 for kitchen sink null model btw
+
+# improved to 1.021047, best i can get.
+load(here("results/kitchen_sink_metric_table.rda"))
 kitchen_sink_metric_table
+
+# save the recipe
+save(engineered_reg_recipe, file = here("results/engineered_reg_recipe.rda"))
+
