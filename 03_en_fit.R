@@ -23,6 +23,7 @@ load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("recipes/sink_recipe.rda"))
+load(here("results/engineered_reg_recipe.rda"))
 
 set.seed(925)
 # model specifications ----
@@ -54,3 +55,22 @@ tuned_elastic <- tune_grid(elastic_workflow,
 # write out results (fitted/trained workflows) ----
 save(tuned_elastic, file = here("results/tuned_elastic.rda"))
 
+# attempt with new feature engineered recipe
+elastic_workflow_eng <- workflow() |> 
+  add_model(elastic_spec) |> 
+  add_recipe(engineered_reg_recipe)
+
+# fit workflows/models ----
+set.seed(925)
+tuned_elastic_eng <- tune_grid(elastic_workflow_eng,
+                           cars_folds,
+                           grid = elastic_grid,
+                           control = control_grid(save_workflow = TRUE))
+
+tuned_elastic_eng |> 
+  collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  slice_min(mean) |> 
+  arrange(mean)
+
+save(tuned_elastic_eng, file = here("results/tuned_elastic_eng.rda"))

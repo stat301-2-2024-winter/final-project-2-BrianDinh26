@@ -23,6 +23,7 @@ load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("recipes/tree_recipe.rda"))
+load(here("results/engineered_tree_recipe.rda"))
 
 set.seed(925)
 # model specifications ----
@@ -49,7 +50,7 @@ hardhat::extract_parameter_set_dials(rf_spec)
 # this is the part that isn't working.
 rf_params <- parameters(rf_spec) |> 
   update(mtry = mtry(c(1, 14))) |> 
-  update(min_n = min_n(c(2, 40)))
+  update(min_n = min_n(c(2, 20)))
 
 # build tuning grid
 rf_grid <- grid_regular(rf_params, levels = 5)
@@ -66,4 +67,26 @@ save(rf_fit, file = here("results/rf_fit.rda"))
 
 load(here("results/rf_fit.rda"))
 
-rf_fit |> collect_metrics()
+rf_fit |> collect_metrics() |> 
+  filter(.metric == "rmse") |> 
+  arrange((mean))
+
+# the feature engineered rf model
+
+rf_workflow_eng <-
+  workflow() |> 
+  add_model(rf_spec) |> 
+  add_recipe(engineered_tree_recipe)
+
+set.seed(925)
+rf_fit_eng <- tune_grid(rf_workflow_eng, 
+                    resamples = cars_folds,
+                    grid = rf_grid,
+                    control = control_resamples(save_workflow = TRUE))
+
+rf_fit_eng |> 
+  collect_metrics() |> 
+  filter(.metric == "rmse") |> 
+  arrange((mean))
+
+save(rf_fit_eng, file = here("results/rf_fit_eng.rda"))

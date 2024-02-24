@@ -25,6 +25,7 @@ load(here("results/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("recipes/tree_recipe.rda"))
+load(here("results/engineered_tree_recipe.rda"))
 
 set.seed(925)
 # model specifications ----
@@ -62,3 +63,23 @@ tuned_bt <- tune_grid(boost_workflow,
 
 # save out results
 save(tuned_bt, file = here("results/tuned_bt.rda"))
+
+# the tree version
+boost_workflow_eng <- workflow() |>
+  add_model(bt_model) |>
+  add_recipe(engineered_tree_recipe)
+
+# fit workflows/models ----
+set.seed(925)
+tuned_bt_eng <- tune_grid(boost_workflow_eng,
+                      cars_folds,
+                      grid = bt_grid,
+                      control = control_grid(save_workflow = TRUE))
+
+tuned_bt_eng |> 
+  collect_metrics() |> 
+  filter(.metric == "rmse") |> 
+  arrange((mean))
+
+# save out results
+save(tuned_bt_eng, file = here("results/tuned_bt_eng.rda"))
