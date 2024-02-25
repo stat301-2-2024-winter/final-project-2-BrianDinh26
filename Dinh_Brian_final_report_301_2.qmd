@@ -31,10 +31,34 @@ For this project, I used a dataset^[Kirill Lepchenkov's Used Cars Dataset ([see 
 In this predictive model building project, I was motivated to learn more about what variables affect the price of a car being resold and what models were the best for creating price predictions. This sort of model would be useful in figuring out if a person is overvaluing or undervaluing their car price listing relative to the market, or if a buyer is getting a good deal or not online.
 
 # Data Overview {#sec-data-overview}
+For the used cars dataset, there are 30 variables and 38,531 observations. There are 10 factor variables, 7 numerical variables, and 13 logical variables. There are 38,531 observations.
+
+There are only misingness issues with the `engine_capcaity` variable, with 10 observations out of the 38,531 observations registering as NA. To deal with this missingness, I plan on imputing the missing observations with a k-nearest neighbors method in the recipe for the model.
+
+The response variable for this dataset, `price_usd`, is (insert graphs here later), thus, I will use a log transformation on it to deal with the distribution.
+
+There appears to be a relationship between (insert what you put in the feature engineered recipes later once your rf model finishes running).
 
 # Methods {#sec-methods}
+In the models I am building, I am using the Root Mean Squared Error (RMSE) as my primary metric to evaluate because I am using regression to predict the price of a car online. The RMSE is the average difference between values predicted by a model and the actual values, meaning the lower the better. The model with the lowest RMSE will be selected as the final model. The dataset will use an 80 / 20 split, meaning approximately 80% of the data will be used for training the model, and 20% of the data will be used to test how successful the model is.
+
+I will be using a total of six models for this report. First off, my baseline model will be the null model, which will serve as a measuring stick for the performance of more complex models. No main arguments will be provided to the null model.
+
+I will be building two linear models that will be using linear recipes: A standard linear regression model and an elastic net model. The standard linear regression model does not have any parameters that will be tuned. For the elastic net model, I will tune the penalty and mixture of the model.
+
+Additionally, I will be building three models that will be using tree-based models: A random forest model, a boosted tree model, and a k-nearest neighbors model. The random forest model will tune the minimum number of datapoints for a split in a node and the number of predictors that will be randomly sampled at each split, while the number of trees is 1000. For the boosted tree model, I will tune the minimum number of datapoints for a split in a node, the number of predictors that will be randomly sampled at each split, and the rate at which the boosting algorithm adapts from iteration-to-iteration. For the k-nearest neighbors model, I will tune the number of neighbors in the model.
+
+The first recipe that will be used is a baseline, "kitchen sink" recipe, which is a basic recipe with minimal steps that will allow for the model to run. This recipe will be applied to all models as a means to evaluate a baseline, especially with the null model.
+
+The second recipe used will be a feature engineered recipe for linear models, where the reciep is modified to include possible interactions and transformations that appear to be correlated or related. In particular, for the case of my used cars dataset, my feature engineered recipe includes performing a log transformation on the `engine_capacity` and `number_of_photos` variables and creating interactions between `duration_listed` and `up_counter`, `is_exchangeable` and `price_usd`, `duration_listed` and `number_of_photos`, `odometer_value` and `year_produced`, and `drivetrain` and `price_usd`. These decisions were made based on the data exploration performed in @sec-data-overview.
+
+The third recipe used will be a feature engineered recipe for tree-based models. The recipe is almost the same as the second recipe, but all factor variables will instead be one-hot encoded.
+
+The resampling technique used is v-fold cross validation with 10 folds and 5 repeats.
 
 # Model Building & Selection Results
+Initially, I applied the baseline recipe to each model and chose the best RMSE value of each dataset, as RMSE is the metric by which I am comparing models and will determine the final model. According to (insert table here), the best performing model is the random forest model, with an RMSE of (insert table here). The hyperparameters of the work on 
+
 
 # Final Model Analysis
 

@@ -54,7 +54,7 @@ cars <- read_csv(here("data/cars.csv"))
 head(cars, n = 5) |> 
   DT::datatable()
 ```
-The used car dataset has 40 variables. Specifically, there are 10 factor variables, 7 numerical variables, and 13 logical variables. There are 38,531 observations.
+The used car dataset has 30 variables. Specifically, there are 10 factor variables, 7 numerical variables, and 13 logical variables. There are 38,531 observations.
 
 ### Missingness check
 ```{r}
