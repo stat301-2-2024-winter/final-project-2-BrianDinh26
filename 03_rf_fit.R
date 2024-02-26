@@ -78,11 +78,6 @@ rf_workflow_eng <-
   add_model(rf_spec) |> 
   add_recipe(engineered_tree_recipe)
 
-fake_workflow <-
-  workflow() |> 
-  add_model(rf_spec) |> 
-  add_recipe(tester_recipe)
-
 set.seed(925)
 rf_fit_eng <- tune_grid(rf_workflow_eng, 
                     resamples = cars_folds,
