@@ -20,7 +20,20 @@ tidymodels_prefer()
 # load training data
 load(here("results/cars_split.rda"))
 
+# laod fits
+load(here("results/rf_fit_eng.rda"))
+
+# finalize workflow ----
+final_wflow <- rf_fit_eng |> 
+  extract_workflow(rf_fit_eng) |>  
+  finalize_workflow(select_best(rf_fit_eng, metric = "rmse"))
+
+# train final model ----
+# set seed
+set.seed(925)
+final_fit <- fit(final_wflow, cars_train)
 
 
 # save out results
+save(final_fit, file = here("results/final_fit.rda"))
 

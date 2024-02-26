@@ -18,7 +18,7 @@ sink_recipe <- recipe(price_usd ~ .,
   step_dummy(all_nominal_predictors()) |>
   step_impute_knn(engine_capacity) |> 
   step_zv(all_predictors()) |> 
-  step_normalize(all_predictors())
+  step_normalize(all_numeric_predictors())
 
 # tree-based kitchen sink recipe (knn, bt, rf)
 tree_recipe <- recipe(price_usd ~ .,
@@ -27,7 +27,7 @@ tree_recipe <- recipe(price_usd ~ .,
   step_dummy(all_nominal_predictors(), one_hot = TRUE) |>
   step_impute_knn(engine_capacity) |> 
   step_zv(all_predictors()) |> 
-  step_normalize(all_predictors())
+  step_normalize(all_numeric_predictors())
 
 save(sink_recipe, file = here("recipes/sink_recipe.rda"))
 save(tree_recipe, file = here("recipes/tree_recipe.rda"))

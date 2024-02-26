@@ -26,7 +26,7 @@ engineered_reg_recipe <- recipe(price_usd ~ .,
   step_interact(terms = ~starts_with("odometer_value"):year_produced)  |> 
   step_interact(terms = ~starts_with("drivetrain"):price_usd)  |> 
   step_zv(all_predictors()) |> 
-  step_normalize(all_predictors())
+  step_normalize(all_numeric_predictors())
 
 # price usd and year produced overfits the model too much
 
@@ -79,7 +79,7 @@ engineered_tree_recipe <- recipe(price_usd ~ .,
   step_interact(terms = ~starts_with("odometer_value"):year_produced)  |> 
   step_interact(terms = ~starts_with("drivetrain"):price_usd)  |> 
   step_zv(all_predictors()) |> 
-  step_normalize(all_predictors())
+  step_normalize(all_numeric_predictors())
 
 prep(engineered_tree_recipe) |> 
   bake(new_data = NULL) |> 
