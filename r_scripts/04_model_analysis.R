@@ -18,7 +18,7 @@ registerDoMC(cores = num_cores)
 tidymodels_prefer()
 
 # load training data
-load(here("results/cars_split.rda"))
+load(here("data_splits/cars_split.rda"))
 
 # load fit data
 load(file = here("results/null_fit.rda"))
@@ -78,8 +78,8 @@ pm_2_table <- bind_rows(table_null, table_olr) |>
   )
 
 # save out results
-save(pm_2_table, file = here("results/pm_2_table.rda"))
-save(kitchen_sink_metric_table, file = here("results/kitchen_sink_metric_table.rda"))
+save(pm_2_table, file = here("figures/pm_2_table.rda"))
+save(kitchen_sink_metric_table, file = here("figures/kitchen_sink_metric_table.rda"))
 
 
 

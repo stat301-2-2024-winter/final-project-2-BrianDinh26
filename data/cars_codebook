@@ -1,0 +1,30 @@
+manufacturer_name: The name of car manufacturer.
+model_name: The name of the model.
+transmission: Type of the transmission.
+color: Body color.
+odometer_value: Odometer state in kilometers.
+year_produced: The year the car has been produced.
+engine_fuel: Fuel type of the engine.
+engine_has_gas: Is the car equipped with propane tank and tubing?
+engine_type: Engine type.
+engine_capacity: The capacity of the engine in liters, numerical column.
+body_type: Type of the body (hatchback, sedan, etc.).
+has_warranty: Does the car have warranty? 
+state: New/owned/emergency. Emergency means the car has been damaged, sometimes severely.
+drivetrain: Front/rear/all drivetrain, categorical column.
+price_usd: The price of a car as listed in the catalog in USD.
+is_exchangeable: If is_exchangeable is True the owner of the car is ready to exchange this car to other cars with little or no additional payment.
+location_region: Categorical column, location_region is a region in Belarus where the car is listed for sale.
+number_of_photos: Number of photos the car has. numerical.
+up_counter: Number of times the car has been upped, numerical. 
+feature_0: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_1: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_2: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_3: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_4: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_5: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_6: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_7: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_8: Is the option like alloy wheels, conditioner, etc. is present in the car.
+feature_9: Is the option like alloy wheels, conditioner, etc. is present in the car.
+duration_listed: Number of days the car is listed in the catalog.

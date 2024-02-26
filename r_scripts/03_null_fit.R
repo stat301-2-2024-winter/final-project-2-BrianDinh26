@@ -19,7 +19,7 @@ registerDoMC(cores = num_cores)
 tidymodels_prefer()
 
 # load training data
-load(here("results/cars_split.rda"))
+load(here("data_splits/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("recipes/sink_recipe.rda"))

@@ -47,7 +47,7 @@ cars_folds <- vfold_cv(cars_train, v = 10, repeats = 5,
                        strata = price_usd)
 
 # write out results
-save(cars_train, cars_test, cars_folds, file = here("results/cars_split.rda"))
+save(cars_train, cars_test, cars_folds, file = here("data_splits/cars_split.rda"))
 
 
 # data exploration

@@ -10,7 +10,7 @@ library(here)
 tidymodels_prefer()
 
 # load split data
-load(here("results/cars_split.rda"))
+load(here("data_splits/cars_split.rda"))
 
 # feature engineered recipe for regression
 engineered_reg_recipe <- recipe(price_usd ~ .,
@@ -32,7 +32,7 @@ prep(engineered_reg_recipe) |>
   head(n = 5)
 
 # save the recipe
-save(engineered_reg_recipe, file = here("results/engineered_reg_recipe.rda"))
+save(engineered_reg_recipe, file = here("recipes/engineered_reg_recipe.rda"))
 
 # tree recipe feature engineered
 engineered_tree_recipe <- recipe(price_usd ~ .,
@@ -52,4 +52,4 @@ prep(engineered_tree_recipe) |>
   head(n = 5)
 
 
-save(engineered_tree_recipe, file = here("results/engineered_tree_recipe.rda"))
+save(engineered_tree_recipe, file = here("recipes/engineered_tree_recipe.rda"))
