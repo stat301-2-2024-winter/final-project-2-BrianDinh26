@@ -4,8 +4,6 @@ library(tidymodels)
 library(naniar)
 library(here)
 library(corrr)
-library(splines)
-
 
 # handle common conflicts
 tidymodels_prefer()
@@ -52,12 +50,34 @@ save(cars_train, cars_test, cars_folds, file = here("data_splits/cars_split.rda"
 
 # data exploration
 
-cars_train |>
+## distribution of price_usd
+price_original_distribution <- cars_train |> 
+  mutate(price_usd = exp(price_usd)) |> 
   ggplot(aes(x = price_usd)) +
   geom_density() +
   labs(x = "Price (USD)",
        y = "Density") +
   theme_classic()
+
+log_price_distribution <- cars_train |>
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  labs(x = "Log Transformed Price (USD)",
+       y = "Density") +
+  theme_classic()
+
+
+## distribution of engine_capacity
+engine_capcacity_distribution <- cars_train |> 
+  ggplot(aes(x = engine_capacity)) + 
+  geom_density() +
+  labs(x = "Engine Capacity")
+
+engine_capcacity_log_distribution <- cars_train |> 
+  ggplot(aes(x = log(engine_capacity))) + 
+  geom_density() +
+  labs(x = "Enginge Capacity (Log Transformed)")
+
 
 cars_train |>
   ggplot(aes(x = price_usd)) +
@@ -93,4 +113,5 @@ cars_train |>
   ggplot(aes(x = log(odometer_value))) +
   geom_density()
 
+save()
 

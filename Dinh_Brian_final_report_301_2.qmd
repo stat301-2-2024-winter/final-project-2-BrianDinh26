@@ -37,6 +37,8 @@ There are only misingness issues with the `engine_capcaity` variable, with 10 ob
 
 The response variable for this dataset, `price_usd`, is (insert graphs here later), thus, I will use a log transformation on it to deal with the distribution.
 
+## Data Exploration {#sec-data-exploration}
+
 There appears to be a relationship between (insert what you put in the feature engineered recipes later once your rf model finishes running).
 
 # Methods {#sec-methods}
@@ -50,7 +52,7 @@ Additionally, I will be building three models that will be using tree-based mode
 
 The first recipe that will be used is a baseline, "kitchen sink" recipe, which is a basic recipe with minimal steps that will allow for the model to run. This recipe will be applied to all models as a means to evaluate a baseline, especially with the null model.
 
-The second recipe used will be a feature engineered recipe for linear models, where the reciep is modified to include possible interactions and transformations that appear to be correlated or related. In particular, for the case of my used cars dataset, my feature engineered recipe includes performing a log transformation on the `engine_capacity` and `number_of_photos` variables and creating interactions between `duration_listed` and `up_counter`, `is_exchangeable` and `price_usd`, `duration_listed` and `number_of_photos`, `odometer_value` and `year_produced`, and `drivetrain` and `price_usd`. These decisions were made based on the data exploration performed in @sec-data-overview.
+The second recipe used will be a feature engineered recipe for linear models, where the reciep is modified to include possible interactions and transformations that appear to be correlated or related. In particular, for the case of my used cars dataset, my feature engineered recipe includes performing a log transformation on the `engine_capacity` and `number_of_photos` variables and creating interactions between `duration_listed` and `up_counter`, `is_exchangeable` and `price_usd`, `duration_listed` and `number_of_photos`, `odometer_value` and `year_produced`, and `drivetrain` and `price_usd`. These decisions were made based on the data exploration performed in @sec-data-exploration.
 
 The third recipe used will be a feature engineered recipe for tree-based models. The recipe is almost the same as the second recipe, but all factor variables will instead be one-hot encoded.
 
