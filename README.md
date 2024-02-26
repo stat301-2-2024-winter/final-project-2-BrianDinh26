@@ -13,4 +13,5 @@ The goals for this project is to create a regression model to predict prices of 
 - `r_scripts/`: Can find the R scripts used to create and evalute the predictive model.
 
 ## Report Files
+
 - `Dinh_Brian_final_report_301_2`: Final report for final project.

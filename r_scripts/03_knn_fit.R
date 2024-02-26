@@ -78,4 +78,4 @@ knn_fit_eng |>
   filter(.metric == "rmse") |> 
   arrange((mean))
 
-save(knn_fit_eng, file = here("results/knn_fit_eng.rda"))
+save(knn_fit_eng, file = here("results/tuned_knn_eng.rda"))

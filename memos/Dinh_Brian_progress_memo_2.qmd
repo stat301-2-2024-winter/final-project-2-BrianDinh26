@@ -36,7 +36,7 @@ library(tidyverse)
 library(here)
 
 # load results
-load(file = here("results/pm_2_table.rda"))
+load(file = here("figures/pm_2_table.rda"))
 ```
 
 ## Data Overview
