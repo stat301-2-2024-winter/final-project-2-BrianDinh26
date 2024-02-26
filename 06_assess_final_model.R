@@ -21,7 +21,7 @@ tidymodels_prefer()
 load(here("results/cars_split.rda"))
 load(here("results/final_fit.rda"))
 
-final_metrics <- metric_set(rmse, mae, mape, rsq)
+final_metrics <- metric_set(rmse, mae, rsq)
 
 set.seed(925)
 final_predict <- predict(final_fit, new_data = cars_test) |> 

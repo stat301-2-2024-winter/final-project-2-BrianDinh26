@@ -58,7 +58,7 @@ save(tuned_elastic, file = here("results/tuned_elastic.rda"))
 # attempt with new feature engineered recipe
 elastic_workflow_eng <- workflow() |> 
   add_model(elastic_spec) |> 
-  add_recipe(engineered_reg_recipe)
+  add_recipe(tester_recipe)
 
 # fit workflows/models ----
 set.seed(925)

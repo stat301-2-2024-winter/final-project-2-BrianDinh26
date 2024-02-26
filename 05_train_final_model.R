@@ -24,14 +24,16 @@ load(here("results/cars_split.rda"))
 load(here("results/rf_fit_eng.rda"))
 
 # finalize workflow ----
-final_wflow <- rf_fit_eng |> 
-  extract_workflow(rf_fit_eng) |>  
-  finalize_workflow(select_best(rf_fit_eng, metric = "rmse"))
+final_wflow <- tuned_elastic_eng |> 
+  extract_workflow(tuned_elastic_eng) |>  
+  finalize_workflow(select_best(tuned_elastic_eng, metric = "rmse"))
 
 # train final model ----
 # set seed
 set.seed(925)
 final_fit <- fit(final_wflow, cars_train)
+
+final_fit
 
 
 # save out results
