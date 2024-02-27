@@ -24,6 +24,16 @@ from: markdown+emoji
 [This is the link to the GitHub Repository.](https://github.com/stat301-2-2024-winter/final-project-2-BrianDinh26.git)
 
 :::
+```{r}
+#| echo: false
+# load in all figures used for this analysis.
+library(tidyverse)
+library(here)
+
+load(here("figures/data_exploration.rda"))
+```
+
+
 
 # Introduction {#sec-introduction}
 For this project, I used a dataset^[Kirill Lepchenkov's Used Cars Dataset ([see website](https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog/data))] on online used car sales, which described the characteristics of various car listings on the website in factor, logical, and numerical form.
@@ -33,11 +43,20 @@ In this predictive model building project, I was motivated to learn more about w
 # Data Overview {#sec-data-overview}
 For the used cars dataset, there are 30 variables and 38,531 observations. There are 10 factor variables, 7 numerical variables, and 13 logical variables. There are 38,531 observations. I will use the variable `price_usd` as my response variable.
 
-There are only misingness issues with the `engine_capcaity` variable, with 10 observations out of the 38,531 observations registering as NA. To deal with this missingness, I will impute the missing observations with the k-nearest neighbors method in the recipes for the model.
+```{r}
+#| echo: false
+#| label: fig-og-log-price
+#| fig-cap: "Comparison of Distribution of Original Price and Log Transformed Price in Whole Dataset"
+
+og_v_log_price
+```
+Based on @fig-og-log-price, the original distribution of `price_usd` is extremely skewed. In comparison, the log transformed version of `price_usd`, although skewed, is less disparate, and therefore I will use the log transofmred version of `price_usd` in my model building.
+
+There are only misingness issues with the `engine_capacity` variable, with 10 observations out of the 38,531 observations registering as NA. To deal with this missingness, I will impute the missing observations with the k-nearest neighbors method in the recipes for the model.
 
 ## Data Exploration {#sec-data-exploration}
+I chose to explore the training data to see if there were any relationships between variables that would be important to note when building the recipe for the model that can affect performance.
 
-There appears to be a relationship between (insert what you put in the feature engineered recipes later once your rf model finishes running).
 
 # Methods {#sec-methods}
 In the models I am building, I am using the Root Mean Squared Error (RMSE) as my primary metric to evaluate because I am using regression to predict the price of a car online. The RMSE is the average difference between values predicted by a model and the actual values, meaning the lower the better. The model with the lowest RMSE will be selected as the final model. The dataset will use an 80 / 20 split, meaning approximately 80% of the data will be used for training the model, and 20% of the data will be used to test how successful the model is.

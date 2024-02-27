@@ -83,6 +83,21 @@ engine_capacity_log_distribution <- cars_train |>
        y = "Density") +
   theme_classic()
 
+## distribution of number of photos
+photos_distribution <- cars_train |> 
+  ggplot(aes(x = number_of_photos)) + 
+  geom_density() +
+  labs(x = "Number of Photos",
+       y = "Density") +
+  theme_classic()
+
+photos_log_distribution <- cars_train |> 
+  ggplot(aes(x = log(number_of_photos))) + 
+  geom_density() +
+  labs(x = "Number of Photos (Log Transformed)",
+       y = "Density") +
+  theme_classic()
+
 ## correlation matrix
 cars_train_corr <- cars_train |> 
   correlate()
@@ -126,12 +141,14 @@ dur_drive <- cars_train |>
        title = "Duration Listed by Drive Train") +
   theme_classic()
 
+og_v_log_price <- (price_original_distribution | log_price_distribution)
+log_original_engine <- (engine_capacity_distribution | engine_capacity_log_distribution)
 categorical_exploration <- (numb_exch | numb_body) / (dur_list | dur_drive)
+log_original_photos <- (photos_distribution | photos_log_distribution)
 
-save(price_original_distribution,
-     log_price_distribution,
-     engine_capacity_log_distribution,
-     engine_capacity_distribution,
+save(og_v_log_price,
+     log_original_engine,
+     log_original_photos,
      cars_train_corr,
      categorical_exploration,
      file = here("figures/data_exploration.rda"))
