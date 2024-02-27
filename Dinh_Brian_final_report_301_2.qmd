@@ -26,6 +26,10 @@ from: markdown+emoji
 :::
 ```{r}
 #| echo: false
+#| label: library-load
+
+# note to self, use knitr::kable, not DT::datatable for captions.
+
 # load in all figures used for this analysis.
 library(tidyverse)
 library(here)
@@ -52,20 +56,28 @@ og_v_log_price
 ```
 Based on @fig-og-log-price, the original distribution of `price_usd` is extremely skewed. In comparison, the log transformed version of `price_usd`, although skewed, is less disparate, and therefore I will use the log transofmred version of `price_usd` in my model building.
 
-There are only misingness issues with the `engine_capacity` variable, with 10 observations out of the 38,531 observations registering as NA. To deal with this missingness, I will impute the missing observations with the k-nearest neighbors method in the recipes for the model.
+```{r}
+#| echo: false
+#| label: fig-missing-check
+#| fig-cap: "View of Missingness in Whole Dataset by Variable"
+
+missingness_check
+```
+
+According to @fig-missing-check, there are only misingness issues with the `engine_capacity` variable, with 10 observations out of the 38,531 observations registering as NA. To deal with this missingness, I will impute the missing observations with the k-nearest neighbors method in the recipes for the model.
 
 ## Data Exploration {#sec-data-exploration}
 I chose to explore the training data to see if there were any relationships between variables that would be important to note when building the recipe for the model that can affect the strength and performance of the model.
 
 ```{r}
 #| echo: false
-#| label: fig-corr-matrix
-#| fig-cap: "Correlation Matrix of Numerical Variables in Training Dataset"
+#| tbl-cap: Correlation Matrix of Numerical Variables in Training Dataset
+#| label: tbl-corr-matrix
 
 cars_train_corr |> 
-  DT::datatable()
+  knitr::kable()
 ```
-To begin, I created a correlation matrix to see what numerical variables were correlated with one another. Based on @fig-corr-matrix, there appear to be correlations between `duration_listed` and `up_counter`, `duration_listed` and `number_of_photos` and `odometer_value` and `year_produced`. It also appears that `year_produced` highly correlates with `price_usd`.
+To begin, I created a correlation matrix to see what numerical variables were correlated with one another. Based on @tbl-corr-matrix, there appear to be correlations between `duration_listed` and `up_counter`, `duration_listed` and `number_of_photos` and `odometer_value` and `year_produced`. It also appears that `year_produced` highly correlates with `price_usd`.
 
 ```{r}
 #| echo: false
@@ -76,26 +88,45 @@ log_original_engine
 log_original_photos
 ```
 
-Next, I explored the distributions of the numerical variables in my training dataset. Based on my findings, it appears that the variables `engine_capacity` and `number_of_photos` had highly skewed distributions. Therefore, I believe that a log 
+Next, I explored the distributions of the numerical variables in my training dataset. Based on my findings, it appears that the variables `engine_capacity` and `number_of_photos` had highly skewed distributions. Therefore, I believe that a log transformation would be appropriate for these variables. According to @fig-original-vs-log-1 and @fig-original-vs-log-2, the log transformations for these variables help make it more balanced out, allowing for a potentially more effective model.
+
+```{r}
+#| echo: false
+#| fig-cap: "Exploration of Categorical Variables and Number of Photos"
+#| label: fig-categorical-exploration-1
+
+categorical_exploration_1
+```
+```{r}
+#| echo: false
+#| fig-cap: "Exploration of Categorical Variables and Duration Listed"
+#| label: fig-categorical-exploration-2
+
+categorical_exploration_2
+```
+
+Last of all, I explored how categorical variables affected the distributions of numeric variables in the dataset. Based on my exploration, some of which can be seen in @fig-categorical-exploration-1 and @fig-categorical-exploration-2, there were no major differentiations in numerical distributions or trends depending on the categorical variables I analyzed. 
 
 
 # Methods {#sec-methods}
-In the models I am building, I am using the Root Mean Squared Error (RMSE) as my primary metric to evaluate because I am using regression to predict the price of a car online. The RMSE is the average difference between values predicted by a model and the actual values, meaning the lower the better. The model with the lowest RMSE will be selected as the final model. The dataset will use an 80 / 20 split, meaning approximately 80% of the data will be used for training the model, and 20% of the data will be used to test how successful the model is.
+For the used cars dataset, I will implement an 80 / 20 split, meaning approximately 80% of the data will be used for training the model, and 20% of the data will be used to test how successful the model is. 
+
+In the models I am building, I am using the Root Mean Squared Error (RMSE) as my primary metric to evaluate because I am using regression to predict the price of a car online. The RMSE is the average difference between values predicted by a model and the actual values, meaning the lower the better. The model with the lowest RMSE relative to the other models will be selected as the final model.
 
 I will be using a total of six models for this report. First off, my baseline model will be the null model, which will serve as a measuring stick for the performance of more complex models. No main arguments will be provided to the null model.
 
-I will be building two linear models that will be using linear recipes: A standard linear regression model and an elastic net model. The standard linear regression model does not have any parameters that will be tuned. For the elastic net model, I will tune the penalty and mixture of the model.
+I will be building two linear models that will be using a recipe for parametric models: A standard linear regression model and an elastic net model. The standard linear regression model does not have any parameters that will be tuned. For the elastic net model, I will tune the penalty and mixture of the model.
 
-Additionally, I will be building three models that will be using tree-based models: A random forest model, a boosted tree model, and a k-nearest neighbors model. The random forest model will tune the minimum number of datapoints for a split in a node and the number of predictors that will be randomly sampled at each split, while the number of trees is 1000. For the boosted tree model, I will tune the minimum number of datapoints for a split in a node, the number of predictors that will be randomly sampled at each split, and the rate at which the boosting algorithm adapts from iteration-to-iteration. For the k-nearest neighbors model, I will tune the number of neighbors in the model.
+Additionally, I will be building three models that will be using a tree-based recipe: A random forest model, a boosted tree model, and a k-nearest neighbors model. The random forest model will tune the minimum number of datapoints for a split in a node and the number of predictors that will be randomly sampled at each split, while the number of trees will bet set at 100. For the boosted tree model, I will tune the minimum number of datapoints for a split in a node, the number of predictors that will be randomly sampled at each split, and the rate at which the boosting algorithm adapts from iteration-to-iteration. For the k-nearest neighbors model, I will tune the number of neighbors in the model, which are the number of close datapoints used for predicting.
 
-The resampling technique used is v-fold cross validation with 10 folds and 5 repeats.
+The resampling technique used will be v-fold cross-validation, with 10 folds and 5 repeats, meaning there will be 10 sets of performance metrics and 5 repetitions of the process. This process is meant to improve the model's accuracy and prevent overfitting through its repetitions and averaging out the results.
 
 ## Recipes 
-The first recipe that will be used is a baseline, "kitchen sink" recipe, which is a basic recipe with minimal steps that will allow for the model to run. This recipe will be applied to all models as a means to evaluate a baseline, especially with the null model.
+The first recipe that will be used is a baseline, "kitchen sink" recipe, which is a basic recipe with minimal steps that will allow for the model to run. This recipe will be applied to all models as a means to evaluate a baseline, especially with the null model. 
 
-The second recipe used will be a feature engineered recipe for linear models, where the reciep is modified to include possible interactions and transformations that appear to be correlated or related. In particular, for the case of my used cars dataset, my feature engineered recipe includes performing a log transformation on the `engine_capacity` and `number_of_photos` variables and creating interactions between `duration_listed` and `up_counter`, `duration_listed` and `number_of_photos`, and `odometer_value` and `year_produced`. These decisions were made based on the data exploration performed in @sec-data-exploration.
+The second recipe used will be a feature engineered recipe for linear models, where the recipe is modified to include possible interactions and transformations that appear to be correlated or related. In particular, for the case of my used cars dataset, my feature engineered recipe includes performing a log transformation on the `engine_capacity` and `number_of_photos` variables and creating interactions between `duration_listed` and `up_counter`, `duration_listed` and `number_of_photos`, and `odometer_value` and `year_produced`. These decisions were made based on the data exploration performed in @sec-data-exploration, where I concluded that there were interactions between these variables or a need to transform the data in order to improve upon the model.
 
-The third recipe used will be a feature engineered recipe for tree-based models. The recipe is almost the same as the second recipe, but all factor variables will instead be one-hot encoded.
+The third recipe used will be a feature engineered recipe for tree-based models. The recipe is almost the same as the second recipe, but all factor variables will instead be one-hot encoded because the recipe will be used on tree-based models.
 
 # Model Building & Selection Results
 Initially, I applied the baseline recipe to each model and chose the best RMSE value of each dataset, as RMSE is the metric by which I am comparing models and will determine the final model. According to (insert table here), the best performing model is the random forest model, with an RMSE of (insert table here). The hyperparameters of the work on 

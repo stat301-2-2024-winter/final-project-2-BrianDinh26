@@ -32,7 +32,7 @@ cars <- read_csv(here("data/cars.csv")) |>
     feature_9 = factor(feature_9)
   )
 
-gg_miss_var(cars)
+missingness_check <- gg_miss_var(cars)
 
 # split the data
 set.seed(925)
@@ -143,13 +143,16 @@ dur_drive <- cars_train |>
 
 og_v_log_price <- (price_original_distribution | log_price_distribution)
 log_original_engine <- (engine_capacity_distribution | engine_capacity_log_distribution)
-categorical_exploration <- (numb_exch | numb_body) / (dur_list | dur_drive)
+categorical_exploration_1 <- (numb_exch / numb_body)
+categorical_exploration_2 <-  (dur_list / dur_drive)
 log_original_photos <- (photos_distribution | photos_log_distribution)
 
 save(og_v_log_price,
      log_original_engine,
      log_original_photos,
      cars_train_corr,
-     categorical_exploration,
+     categorical_exploration_1,
+     categorical_exploration_2,
+     missingness_check,
      file = here("figures/data_exploration.rda"))
 
