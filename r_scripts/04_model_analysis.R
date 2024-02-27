@@ -113,6 +113,7 @@ rf_select <- select_best(rf_fit_eng, metric = "rmse") |>
 # save out results
 save(pm_2_table, file = here("figures/pm_2_table.rda"))
 save(kitchen_sink_metric_table, file = here("figures/kitchen_sink_metric_table.rda"))
+save(knn_select, elastic_select, bt_select, rf_select, file = here("figures/best_hyperparameters.rda"))
 
 
 
