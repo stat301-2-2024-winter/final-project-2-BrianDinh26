@@ -4,6 +4,7 @@ library(tidymodels)
 library(naniar)
 library(here)
 library(corrr)
+library(patchwork)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -51,7 +52,7 @@ save(cars_train, cars_test, cars_folds, file = here("data_splits/cars_split.rda"
 # data exploration
 
 ## distribution of price_usd
-price_original_distribution <- cars_train |> 
+price_original_distribution <- cars |> 
   mutate(price_usd = exp(price_usd)) |> 
   ggplot(aes(x = price_usd)) +
   geom_density() +
@@ -59,7 +60,7 @@ price_original_distribution <- cars_train |>
        y = "Density") +
   theme_classic()
 
-log_price_distribution <- cars_train |>
+log_price_distribution <- cars |>
   ggplot(aes(x = price_usd)) +
   geom_density() +
   labs(x = "Log Transformed Price (USD)",
@@ -68,50 +69,70 @@ log_price_distribution <- cars_train |>
 
 
 ## distribution of engine_capacity
-engine_capcacity_distribution <- cars_train |> 
+engine_capacity_distribution <- cars_train |> 
   ggplot(aes(x = engine_capacity)) + 
   geom_density() +
-  labs(x = "Engine Capacity")
-
-engine_capcacity_log_distribution <- cars_train |> 
-  ggplot(aes(x = log(engine_capacity))) + 
-  geom_density() +
-  labs(x = "Enginge Capacity (Log Transformed)")
-
-
-cars_train |>
-  ggplot(aes(x = price_usd)) +
-  geom_density() +
-  labs(x = "Price (USD)",
+  labs(x = "Engine Capacity",
        y = "Density") +
   theme_classic()
 
-cars_train |> 
-  ggplot(aes(x = engine_capacity)) +
-  geom_histogram() +
-  facet_wrap(~ state)
+engine_capacity_log_distribution <- cars_train |> 
+  ggplot(aes(x = log(engine_capacity))) + 
+  geom_density() +
+  labs(x = "Enginge Capacity (Log Transformed)",
+       y = "Density") +
+  theme_classic()
 
-cars_train |> 
-  ggplot(aes(y = odometer_value, x = price_usd )) +
-  geom_point()
-
+## correlation matrix
 cars_train_corr <- cars_train |> 
   correlate()
-#seems that there's significance in year made and listing price.
 
-cars_train |> 
-  ggplot(aes(x = year_produced, y = price_usd)) +
-  geom_point() +
-  facet_wrap(~ engine_type)
+# slight categorical explorations.
 
-cars_train |> 
+numb_exch <- cars_train |> 
   ggplot(aes(x = number_of_photos)) +
   geom_density() +
-  facet_wrap(~ is_exchangeable)
+  facet_wrap(~ is_exchangeable) +
+  labs(x = "Number of Photos",
+       y = "Density",
+       title = "Number of Photos Depending on if Car is Exchangeable") +
+  theme_classic()
 
-cars_train |> 
-  ggplot(aes(x = log(odometer_value))) +
-  geom_density()
+numb_body <- cars_train |> 
+  ggplot(aes(x = number_of_photos)) +
+  geom_density() +
+  facet_wrap(~ body_type) +
+  labs(x = "Number of Photos",
+       y = "Density",
+       title = "Number of Photos Depending on Body Type of Vehicle") +
+  theme_classic()
 
-save()
+
+dur_list <- cars_train |> 
+  ggplot(aes(x = duration_listed)) +
+  geom_density() +
+  facet_wrap(~ transmission) +
+  labs(x = "Duration Listed",
+       y = "Density",
+       title = "Duration Listed by Transmission Type") +
+  theme_classic()
+
+dur_drive <- cars_train |> 
+  ggplot(aes(x = duration_listed)) +
+  geom_density() +
+  facet_wrap(~ drivetrain) +
+  labs(x = "Duration Listed",
+       y = "Density",
+       title = "Duration Listed by Drive Train") +
+  theme_classic()
+
+categorical_exploration <- (numb_exch | numb_body) / (dur_list | dur_drive)
+
+save(price_original_distribution,
+     log_price_distribution,
+     engine_capacity_log_distribution,
+     engine_capacity_distribution,
+     cars_train_corr,
+     categorical_exploration,
+     file = here("figures/data_exploration.rda"))
 
