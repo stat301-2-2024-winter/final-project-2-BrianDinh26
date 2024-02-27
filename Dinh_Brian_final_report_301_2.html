@@ -3247,7 +3247,63 @@ Github Repository Link
 </section>
 <section id="model-building-selection-results" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Model Building &amp; Selection Results</h1>
-<p>Initially, I applied the baseline recipe to each model and chose the best RMSE value of each dataset, as RMSE is the metric by which I am comparing models and will determine the final model. According to (insert table here), the best performing model is the random forest model, with an RMSE of (insert table here). The hyperparameters of the work on</p>
+<p>Initially, I applied the baseline, “kitchen sink” recipe to each model and chose the best RMSE value of each dataset, as RMSE is the metric by which I am comparing models and will determine the final model.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-rmse-baseline" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table 2: Table Comparing RMSEs of All Models Using Baseline Recipe</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Standard Error</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">rf</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: right;">0.3646289</td>
+<td style="text-align: right;">0.0021675</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bt</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: right;">0.3979757</td>
+<td style="text-align: right;">0.0027658</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">olr</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: right;">0.4038548</td>
+<td style="text-align: right;">0.0023272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">elastic</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: right;">0.4040577</td>
+<td style="text-align: right;">0.0023261</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">knn</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: right;">0.5166490</td>
+<td style="text-align: right;">0.0017086</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">null</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: right;">1.0274980</td>
+<td style="text-align: right;">0.0015320</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>According to (insert table here), the best performing model is the random forest model, with an RMSE of (insert table here). The hyperparameters of the work on</p>
 </section>
 <section id="final-model-analysis" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Final Model Analysis</h1>

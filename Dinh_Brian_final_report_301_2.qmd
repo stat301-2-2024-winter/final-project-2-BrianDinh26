@@ -35,6 +35,7 @@ library(tidyverse)
 library(here)
 
 load(here("figures/data_exploration.rda"))
+load(here("figures/kitchen_sink_metric_table.rda"))
 ```
 
 
@@ -129,7 +130,23 @@ The second recipe used will be a feature engineered recipe for linear models, wh
 The third recipe used will be a feature engineered recipe for tree-based models. The recipe is almost the same as the second recipe, but all factor variables will instead be one-hot encoded because the recipe will be used on tree-based models.
 
 # Model Building & Selection Results
-Initially, I applied the baseline recipe to each model and chose the best RMSE value of each dataset, as RMSE is the metric by which I am comparing models and will determine the final model. According to (insert table here), the best performing model is the random forest model, with an RMSE of (insert table here). The hyperparameters of the work on 
+Initially, I applied the baseline, "kitchen sink" recipe to each model and chose the best RMSE value of each dataset, as RMSE is the metric by which I am comparing models and will determine the final model. 
+
+```{r}
+#| echo: false
+#| tbl-cap: "Table Comparing RMSEs of All Models Using Baseline Recipe"
+#| label: tbl-rmse-baseline 
+
+kitchen_sink_metric_table |> 
+  knitr::kable()
+```
+
+
+According to @tbl-rmse-baseline, the best performing model is the random forest model, with an RMSE of approximately 0.3646289, while the worst performing model was the null model, with an RMSE of approximately 1.0274980. It appears that there is room to improve on the baseline model because of the relatively high RMSE value.
+
+Next, I used the feature engineered recipes for the parametric and tree-based models and found the best hyperparameters for the models that were tuned.
+
+First
 
 
 # Final Model Analysis

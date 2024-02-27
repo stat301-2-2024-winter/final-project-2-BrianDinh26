@@ -27,7 +27,11 @@ load(file = here("results/rf_fit.rda"))
 load(file = here("results/tuned_bt.rda"))
 load(file = here("results/tuned_elastic.rda"))
 load(file = here("results/tuned_knn.rda"))
-
+load(file = here("results/tuned_knn_eng.rda"))
+load(file = here("results/tuned_elastic_eng.rda"))
+load(file = here("results/tuned_bt_eng.rda"))
+load(file = here("results/rf_fit_eng.rda"))
+load(file = here("results/olr_lm_fit_eng.rda"))
 
 
 #combine all models into a table
@@ -75,6 +79,35 @@ pm_2_table <- bind_rows(table_null, table_olr) |>
     Metric = .metric,
     Mean = mean,
     "Standard Error" = std_err
+  )
+
+# find the best hyperparameters for the models.
+knn_select <- select_best(knn_fit_eng, metric = "rmse") |> 
+  rename(
+    Config = .config,
+    Neighbors = neighbors
+  )
+
+elastic_select <- select_best(tuned_elastic_eng, metric = "rmse") |> 
+  rename(
+    Penalty = penalty,
+    Mixture = mixture,
+    Config = .config
+  )
+
+bt_select <- select_best(tuned_bt_eng, metric = "rmse") |> 
+  rename(
+    Config = .config,
+    "Min Num Models" = min_n,
+    "Learn Rate" = learn_rate,
+    "Number of randomly drawn candidate variables" = mtry
+  )
+
+rf_select <- select_best(rf_fit_eng, metric = "rmse") |> 
+  rename(
+    Config = .config,
+    "Min Num Models" = min_n,
+    "Number of randomly drawn candidate variables" = mtry
   )
 
 # save out results
