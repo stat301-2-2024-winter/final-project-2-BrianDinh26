@@ -30,6 +30,9 @@ from: markdown+emoji
 
 # note to self, use knitr::kable, not DT::datatable for captions.
 
+# turn off scientific notation
+options(scipen=999)
+
 # load in all figures used for this analysis.
 library(tidyverse)
 library(here)
@@ -131,6 +134,7 @@ The second recipe used will be a feature engineered recipe for linear models, wh
 The third recipe used will be a feature engineered recipe for tree-based models. The recipe is almost the same as the second recipe, but all factor variables will instead be one-hot encoded because the recipe will be used on tree-based models.
 
 # Model Building & Selection Results
+## Baseline Recipe Model Results
 Initially, I applied the baseline, "kitchen sink" recipe to each model and chose the best RMSE value of each dataset, as RMSE is the metric by which I am comparing models and will determine the final model. 
 
 ```{r}
@@ -142,16 +146,57 @@ kitchen_sink_metric_table |>
   knitr::kable()
 ```
 
-
 According to @tbl-rmse-baseline, the best performing model is the random forest model, with an RMSE of approximately 0.3646289, while the worst performing model was the null model, with an RMSE of approximately 1.0274980. It appears that there is room to improve on the baseline model because of the relatively high RMSE value.
 
+## Best Hyperparameters for Feature Engineered Recipe Models
 Next, I used the feature engineered recipes for the parametric and tree-based models and found the best hyperparameters for the models that were tuned, based on the lowest RMSE found for each model. For the null model and the ordinary linear regression model, there was no tuning of hyperparameters involved because they do not have relevant hyperparameters to look at.
 
 ```{r}
 #| echo: false
-#| tbl-cap: "Best Hyperparameters for the"
-#| label: tbl-rmse-baseline 
+#| tbl-cap: "Best Hyperparameters for the Elastic Net Model"
+#| label: tbl-elastic-hyper
 
+elastic_select |> 
+  knitr::kable(digits = c(15, 1, NA))
+```
+According to @tbl-elastic-hyper, the best hyperparameters for the elastic net model is a penalty value of effectively 0 and a mixture of 1, indicating that a lasso regression results in the best RMSE when using the elastic net model.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the K-Nearest Neighbors Model"
+#| label: tbl-knn-hyper
+
+knn_select |> 
+  knitr::kable()
+```
+Based on @tbl-knn-hyper, the best model for the k-nearest neighbors model has tuned the value of neighbors to 15. 
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the Boosted Tree Model"
+#| label: tbl-bt-hyper
+
+bt_select |> 
+  knitr::kable()
+```
+According to @tbl-bt-hyper, the best hyperparameters for the boosted tree model are 14 for the number of randomly drawn candidate variables, 21 for the minimum number of models, and a learn rate of approximately 0.6309573.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the Random Forest Model"
+#| label: tbl-rf-hyper
+
+rf_select |> 
+  knitr::kable()
+```
+Last of all, for the random forest model, the best hyperparameters for the random forest model, based on @tbl-rf-hyper, are 14 for the number of randomly drawn candidate and 2 for the minimum number of models.
+
+For the number of randomly drawn candidate variables in my random forest and boosted tree models, I had my range for tuning set to a maximum of 14, so it is likely that further tuning could be explored by increasing this value when setting tuning limits.
+
+## Feature Engineered Recipe Model Results
+After analyzing the hyperparameters, I compared the results of the models that used the feature engineered recipe to one another with the metric of RMSE.
+
+```{r}
 
 ```
 

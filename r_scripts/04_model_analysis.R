@@ -32,6 +32,7 @@ load(file = here("results/tuned_elastic_eng.rda"))
 load(file = here("results/tuned_bt_eng.rda"))
 load(file = here("results/rf_fit_eng.rda"))
 load(file = here("results/olr_lm_fit_eng.rda"))
+load(file = here("results/null_fit_eng.rda"))
 
 
 #combine all models into a table
@@ -110,10 +111,50 @@ rf_select <- select_best(rf_fit_eng, metric = "rmse") |>
     "Number of randomly drawn candidate variables" = mtry
   )
 
+#combine all models into a table (final)
+table_null_eng <- null_fit_eng |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "null")
+
+table_olr_eng <- olr_lm_fit_eng |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "olr")
+
+table_rf_eng <- rf_fit_eng |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "rf")
+
+table_bt_eng <- tuned_bt_eng |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "bt")
+
+table_elastic_eng <- tuned_elastic_eng |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "elastic")
+
+table_knn_eng <- knn_fit_eng |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "knn")
+
+engineered_final_table <- bind_rows(table_null_eng, table_olr_eng, table_rf_eng,
+                                       table_bt_eng, table_elastic_eng, table_knn_eng) |> 
+  slice_min(mean, by = model) |> 
+  arrange(mean) |> 
+  select(model, .metric, mean, std_err) |> 
+  rename(
+    Model = model,
+    Metric = .metric,
+    Mean = mean,
+    "Standard Error" = std_err
+  ) |> 
+  distinct(Model, .keep_all = TRUE)
+
 # save out results
 save(pm_2_table, file = here("figures/pm_2_table.rda"))
 save(kitchen_sink_metric_table, file = here("figures/kitchen_sink_metric_table.rda"))
 save(knn_select, elastic_select, bt_select, rf_select, file = here("figures/best_hyperparameters.rda"))
 
 
-
+rf_fit_eng |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  arrange(mean)
