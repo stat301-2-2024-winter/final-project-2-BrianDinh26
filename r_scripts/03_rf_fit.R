@@ -30,7 +30,7 @@ set.seed(925)
 rf_spec <- 
   rand_forest(
     mode = "regression",
-    trees = 100, 
+    trees = 500, 
     min_n = tune(),
     mtry = tune()
   ) |> 
@@ -49,7 +49,7 @@ hardhat::extract_parameter_set_dials(rf_spec)
 
 # this is the part that isn't working.
 rf_params <- parameters(rf_spec) |> 
-  update(mtry = mtry(c(1, 14)),
+  update(mtry = mtry(c(1, 9)),
          min_n = min_n(c(2, 15)))
 
 # build tuning grid

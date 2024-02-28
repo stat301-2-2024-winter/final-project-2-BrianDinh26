@@ -97,30 +97,35 @@ rf_select <- select_best(rf_fit_eng, metric = "rmse") |>
   )
 
 #combine all models into a table (final)
-table_null_2 <- null_fit |> collect_metrics() |> 
+table_null_2 <- null_fit_eng |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
   mutate(model = "null")
 
 
 table_olr_eng <- olr_lm_fit_eng |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
-  mutate(model = "olr")
+  mutate(model = "olr",
+         recipe = "feature engineered")
 
 table_rf_eng <- rf_fit_eng |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
-  mutate(model = "rf")
+  mutate(model = "rf",
+         recipe = "feature engineered")
 
 table_bt_eng <- tuned_bt_eng |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
-  mutate(model = "bt")
+  mutate(model = "bt",
+         recipe = "feature engineered")
 
 table_elastic_eng <- tuned_elastic_eng |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
-  mutate(model = "elastic")
+  mutate(model = "elastic",
+         recipe = "feature engineered")
 
 table_knn_eng <- knn_fit_eng |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
-  mutate(model = "knn")
+  mutate(model = "knn",
+         recipe = "feature engineered")
 
 engineered_final_table <- bind_rows(table_null_2, table_olr_eng, table_rf_eng,
                                        table_bt_eng, table_elastic_eng, table_knn_eng) |> 

@@ -40,7 +40,9 @@ elastic_workflow_eng <- workflow() |>
   add_recipe(engineered_reg_recipe)
 
 # set hyperparameters (for later tuning)
-elastic_params <- hardhat::extract_parameter_set_dials(elastic_spec)
+elastic_params <- hardhat::extract_parameter_set_dials(elastic_spec) |> 
+  update(mixture = mixture(c(0, 1)),
+         penalty = penalty(c(-4, 0)))
 
 # grid
 elastic_grid <- grid_regular(elastic_params, levels = 5)

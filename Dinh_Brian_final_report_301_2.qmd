@@ -74,27 +74,7 @@ missingness_check
 
 According to @fig-missing-check, there are only misingness issues with the `engine_capacity` variable, with 10 observations out of the 38,531 observations registering as NA. To deal with this missingness, I will impute the missing observations with the k-nearest neighbors method in the recipes for the model.
 
-## Data Exploration {#sec-data-exploration}
-I chose to explore the training data to see if there were any relationships between variables that would be important to note when building the recipe for the model that can affect the strength and performance of the model.
-
-```{r}
-#| echo: false
-#| tbl-cap: Correlation Matrix of Numerical Variables in Training Dataset
-#| label: tbl-corr-matrix
-
-cars_train_corr |> 
-  knitr::kable()
-```
-To begin, I created a correlation matrix to see what numerical variables were correlated with one another. Based on @tbl-corr-matrix, there appear to be correlations between `duration_listed` and `up_counter`.
-
-```{r}
-#| echo: false
-#| label: fig-original-vs-log
-#| fig-cap: "Original vs Log Distributions"
-
-log_original_engine
-log_original_photos
-```
+Additionally, I used an 80/20 split of my training data to explore possible relationships in the training dataset, meaning that 80% of the selected data from the training dataset will be used to explore relationships. Based on my exploratory data analysis, there appear to be correlations between `duration_listed` and `up_counter`. For more information on the exploration methods, please refer to  
 
 Next, I explored the distributions of the numerical variables in my training dataset. Based on my findings, it appears that the variables `engine_capacity` and `number_of_photos` had highly skewed distributions. Therefore, I believe that a log transformation would be appropriate for these variables. According to @fig-original-vs-log-1 and @fig-original-vs-log-2, the log transformations for these variables help make it more balanced out, allowing for a potentially more effective model.
 
@@ -142,14 +122,14 @@ Initially, I applied the baseline, "kitchen sink" recipe to the null model and f
 
 ```{r}
 #| echo: false
-#| tbl-cap: "Baseline RMSE from Null Model"
+#| tbl-cap: "RMSEs of Baseline Recipe Trained Modelsl"
 #| label: tbl-rmse-baseline 
 
-table_null |> 
+kitchen_sink_metric_table |> 
   knitr::kable()
 ```
 
-According to @tbl-rmse-baseline, the null model's RMSE is 1.027498.
+According to @tbl-rmse-baseline, the best performing model was the random forest model, with an RMSE of approximately 
 
 ## Best Hyperparameters for Feature Engineered Recipe Models
 Next, I used the feature engineered recipes for the parametric and tree-based models and found the best hyperparameters for the models that were tuned, based on the lowest RMSE found for each model. For the null model and the ordinary linear regression model, there was no tuning of hyperparameters involved because they do not have relevant hyperparameters to look at.
@@ -208,7 +188,10 @@ engineered_final_table |>
   knitr::kable()
 ```
 
-Based on @tbl-rmse-comparison, the random forest model will act as the final model, as it it has the lowest RMSE value out of the six models, indicating lower error and therefore stronger accuracy. I was not surprised that the random forest model won because of its complexity relative to the other models, although I was surprised at how strong the ordinary linear regression performed, with an RMSE of 0.3661882, because I did not tune any parameters for it. I expected the models that involved tuning hyperparameters, such as the boosted tree, elastic net, and k-nearest neighbors model, to perform better than the ordinary linear regression model, although the ordinary linear regression model may have had a lower RMSE because I removed some categorical variables, such as `color` and `engine_has_gas`, that I deemed to be disruptive to the model.
+Based on @tbl-rmse-comparison, the random forest model will act as the final model, as it it has the lowest RMSE value out of the six models, indicating lower error and therefore stronger accuracy. I was not surprised that the random forest model won because of its complexity relative to the other models, although I was surprised at how strong the ordinary linear regression performed, with an RMSE of 0.3661882, because I did not tune any parameters for it. I expected the models that involved tuning hyperparameters, such as the boosted tree, elastic net, and k-nearest neighbors model, to perform better than the ordinary linear regression model, although the ordinary linear regression model may have had a lower RMSE because I removed some categorical data, such as the color and whether or not the vehicle had gas, that I deemed to be disruptive to the model.
+
+## Final Model Selection
+(insert the combined table here and say which one is gonna be da final!!!!! and compare how well each does).
 
 # Final Model Analysis
 
@@ -221,7 +204,7 @@ After determining that the best model was the random forest model, I fit and tra
 final_predict_stats |> 
   knitr::kable()
 ```
-Based on @tbl-final-model-stats, the RMSE is 0.3639547, the mean average error (MAE) is 0.2485033, and the $R^2$ is 0.8778823. Although the RMSE is slightly higher than that of the RMSE for the random forest model as seen in @tbl-rmse-comparison, the RMSE is relatively lower than all the other models. Additionally, the MAE is quite low, indicating less error involved in the model. The value for $R^2$ indicates that approximately 87.78% of the results can be explained by the model, which is quite high. Next, I comapred the results of the predicted and actual values on a graph.
+Based on @tbl-final-model-stats, the RMSE is 0.3639547, the mean average error (MAE) is 0.2485033, and the $R^2$ is 0.8778823. Although the RMSE is slightly higher than that of the RMSE for the random forest model as seen in @tbl-rmse-comparison, the RMSE is relatively lower than all the other models. Additionally, the MAE is quite low, indicating less error involved in the model. The value for $R^2$ indicates that approximately 87.78% of the results can be explained by the model, which is quite high. Next, I comapred the results of the predicted and actual values on a graph. (rmse penalizes outliers more)
 
 ```{r}
 #| echo: false
@@ -241,8 +224,57 @@ predict_vs_obs_plot_original
 ```
 Based on @fig-price-graph, there appears to be more variation between the actual prices and predicted prices. More specifically, there tends to be some prices that are much higher in reality in comparison to the predicted price, but for the majority of the results, the predicted and actual prices appear quite close to one another. 
 
-According to the results of @fig-log-price-graph and @fig-log-price-graph, I believe that it was justified to use a random forest model due to the strength of its predictive performance. Additionally, based on @tbl-rmse-comparison, the RMSE for the baseline model is much higher than that of the final model. Thus, I think the effort involved in creating the model made sense, as it allowed for more accurate predictions. I believe the random forest model performed the best because of its felxibility in handling nonlinear relationships, because there were many variables that did not immediately have noticeable correlations due to their nonlinearity when graphed and calculated.
+According to the results of @fig-log-price-graph and @fig-log-price-graph, I believe that it was justified to use a random forest model due to the strength of its predictive performance. Additionally, based on @tbl-rmse-comparison, the RMSE for the baseline model is much higher than that of the final model. Thus, I think the effort involved in creating the model made sense, as it allowed for more accurate predictions. I believe the random forest model performed the best because of its flexibility in handling nonlinear relationships, because there were many variables that did not immediately have noticeable correlations due to their nonlinearity when graphed and calculated.
 
 # Conclusions
+After working on training and creating my predictive models, I learned that the best model for predicting used car prices was the random forest model using a feature engineered recipe, with significant improvements upon the baseline null model. It appears that tree-based models perform well in this dataset due to its ability to deal with nonlinearity and have flexibility with its variables, as the used cars dataset I used had high levels of nonlinearity in its numeric variables. Using a feature engineered recipe allowed for stronger predictive ability in comparison to the baseline null model.
+
+For future models,
+
 mention what did the best, what to do in the future, and also future insights/things to explore (research questions for the future)
+
+## References
+
+
+## Appendix
+I chose to explore the training data to see if there were any relationships between variables that would be important to note when building the recipe for the model that can affect the strength and performance of the model.
+
+```{r}
+#| echo: false
+#| tbl-cap: Correlation Matrix of Numerical Variables in Training Dataset
+#| label: tbl-corr-matrix
+
+cars_train_corr |> 
+  knitr::kable()
+```
+To begin, I created a correlation matrix to see what numerical variables were correlated with one another. Based on @tbl-corr-matrix, there appear to be correlations between `duration_listed` and `up_counter`.
+
+```{r}
+#| echo: false
+#| label: fig-original-vs-log
+#| fig-cap: "Original vs Log Distributions"
+
+log_original_engine
+log_original_photos
+```
+
+Next, I explored the distributions of the numerical variables in my training dataset. Based on my findings, it appears that the variables `engine_capacity` and `number_of_photos` had highly skewed distributions. Therefore, I believe that a log transformation would be appropriate for these variables. According to @fig-original-vs-log-1 and @fig-original-vs-log-2, the log transformations for these variables help make it more balanced out, allowing for a potentially more effective model.
+
+```{r}
+#| echo: false
+#| fig-cap: "Exploration of Categorical Variables"
+#| label: fig-test
+
+categorical_exploration_1
+```
+```{r}
+#| echo: false
+#| fig-cap: "Car Year Produced Compared to Manufacturer"
+#| label: fig-yahoo
+
+manf
+```
+
+Last of all, I explored how categorical variables affected the distributions of numeric variables in the dataset. Based on my exploration, as seen in @fig-test and @fig-yahoo, there were associations between `engine_type` and `engine_capacity`, `is_exchangeable` and `duration_listed`, and `manufacturer_name` and `year_produced`. 
+
 

@@ -32,8 +32,8 @@ bt_model <- boost_tree(
   mode = "regression",
   min_n = tune(),
   mtry = tune(),
-  learn_rate = tune()
-) |>
+  trees = 500,
+  learn_rate = tune()) |>
   set_engine("xgboost")
 
 # define workflows ----
@@ -46,7 +46,8 @@ hardhat::extract_parameter_set_dials(bt_model)
 
 # change hyperparameter ranges
 bt_params <- hardhat::extract_parameter_set_dials(bt_model) |> 
-  update(mtry = mtry(c(1, 14)),
+  update(mtry = mtry(c(1, 9)),
+         min_n = min_n(c(2, 15)),
          learn_rate = learn_rate(range = c(-5, -0.2))
   ) 
 
