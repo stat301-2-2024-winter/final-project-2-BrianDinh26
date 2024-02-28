@@ -82,3 +82,9 @@ tuned_bt_eng |>
 
 # save out results
 save(tuned_bt_eng, file = here("results/tuned_bt_eng.rda"))
+
+null_Fit |> 
+  collect_metrics() |> 
+  filter(.metric == "rmse") |> 
+  arrange((mean))
+

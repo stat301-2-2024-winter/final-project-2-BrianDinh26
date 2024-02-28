@@ -141,6 +141,66 @@ dur_drive <- cars_train |>
        title = "Duration Listed by Drive Train") +
   theme_classic()
 
+
+cars_train |> 
+  ggplot(aes(x = duration_listed)) +
+  geom_density() +
+  facet_wrap(~ drivetrain) +
+  xlim(0, 250)
+
+cars_train |> 
+  ggplot(aes(x = engine_capacity)) +
+  geom_density() +
+  facet_wrap(~ engine_type)
+
+cars_train |> 
+  ggplot(aes(x = duration_listed)) +
+  geom_density() +
+  facet_wrap(~ is_exchangeable) +
+  xlim(0, 250)
+
+cars_train |> 
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  facet_wrap(~ color)
+
+
+cars_train |> 
+  ggplot(aes(x = year_produced)) +
+  geom_density() +
+  facet_wrap(~ manufacturer_name)
+
+
+cars_train |> 
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  facet_wrap(~ engine_has_gas)
+
+cars_train |> 
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  facet_wrap(~ body_type)
+
+cars_train |> 
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  facet_wrap(~ state)
+
+cars_train |> 
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  facet_wrap(~ has_warranty)
+
+cars_train |> 
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  facet_wrap(~ feature_9)
+
+cars_train |> 
+  ggplot(aes(x = duration_listed)) +
+  geom_density() +
+  facet_wrap(~ manufacturer_name)
+
 og_v_log_price <- (price_original_distribution | log_price_distribution)
 log_original_engine <- (engine_capacity_distribution | engine_capacity_log_distribution)
 categorical_exploration_1 <- (numb_exch / numb_body)

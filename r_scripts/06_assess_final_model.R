@@ -18,7 +18,7 @@ registerDoMC(cores = num_cores)
 tidymodels_prefer()
 
 # load training data
-load(here("results/cars_split.rda"))
+load(here("data_splits/cars_split.rda"))
 load(here("results/final_fit.rda"))
 
 final_metrics <- metric_set(rmse, mae, rsq)

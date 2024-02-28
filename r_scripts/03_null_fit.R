@@ -48,7 +48,7 @@ save(null_fit, file = here("results/null_fit.rda"))
 
 load(file = here("results/null_fit.rda"))
 
-null_fit |> collect_metrics() |> 
+metric <- null_fit |> collect_metrics() |> 
   filter(.metric == 'rmse')
 
 # new recipe version.
@@ -62,8 +62,7 @@ null_fit_eng <- fit_resamples(null_wflow_eng,
                                 resamples = cars_folds,
                                 control = control_resamples(save_workflow = TRUE))
 
-null_fit_eng |> collect_metrics()
-# ah shoot did I overfit?
+metric2 <- null_fit_eng |> collect_metrics()
 
 # save out results
 save(null_fit_eng, file = here("results/null_fit_eng.rda"))
