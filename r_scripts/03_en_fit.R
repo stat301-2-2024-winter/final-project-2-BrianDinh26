@@ -39,10 +39,14 @@ elastic_workflow_eng <- workflow() |>
   add_model(elastic_spec) |> 
   add_recipe(engineered_reg_recipe)
 
+elastic_workflow <- workflow() |> 
+  add_model(elastic_spec) |> 
+  add_recipe(sink_recipe)
+
 # set hyperparameters (for later tuning)
 elastic_params <- hardhat::extract_parameter_set_dials(elastic_spec) |> 
   update(mixture = mixture(c(0, 1)),
-         penalty = penalty(c(-4, 0)))
+         penalty = penalty(c(-1.75, 0)))
 
 # grid
 elastic_grid <- grid_regular(elastic_params, levels = 5)
@@ -62,3 +66,18 @@ tuned_elastic_eng |>
   arrange(mean)
 
 save(tuned_elastic_eng, file = here("results/tuned_elastic_eng.rda"))
+
+# fit workflows/models ----
+set.seed(444)
+tuned_elastic <- tune_grid(elastic_workflow,
+                               cars_folds,
+                               grid = elastic_grid,
+                               control = control_grid(save_workflow = TRUE))
+
+tuned_elastic |> 
+  collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  slice_min(mean) |> 
+  arrange(mean)
+
+save(tuned_elastic, file = here("results/tuned_elastic.rda"))
