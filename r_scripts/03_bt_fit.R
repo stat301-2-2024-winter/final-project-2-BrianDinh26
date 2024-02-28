@@ -37,9 +37,9 @@ bt_model <- boost_tree(
   set_engine("xgboost")
 
 # define workflows ----
-boost_workflow <- workflow() |>
+boost_workflow_eng <- workflow() |>
   add_model(bt_model) |>
-  add_recipe(tree_recipe)
+  add_recipe(engineered_tree_recipe)
 
 # check ranges for hyperparameters
 hardhat::extract_parameter_set_dials(bt_model)
@@ -55,25 +55,10 @@ bt_grid <- grid_regular(bt_params, levels = 5)
 
 # fit workflows/models ----
 set.seed(925)
-tuned_bt <- tune_grid(boost_workflow,
-                      cars_folds,
-                      grid = bt_grid,
-                      control = control_grid(save_workflow = TRUE))
-
-# save out results
-save(tuned_bt, file = here("results/tuned_bt.rda"))
-
-# the tree version
-boost_workflow_eng <- workflow() |>
-  add_model(bt_model) |>
-  add_recipe(engineered_tree_recipe)
-
-# fit workflows/models ----
-set.seed(925)
 tuned_bt_eng <- tune_grid(boost_workflow_eng,
-                      cars_folds,
-                      grid = bt_grid,
-                      control = control_grid(save_workflow = TRUE))
+                          cars_folds,
+                          grid = bt_grid,
+                          control = control_grid(save_workflow = TRUE))
 
 tuned_bt_eng |> 
   collect_metrics() |> 
@@ -83,8 +68,4 @@ tuned_bt_eng |>
 # save out results
 save(tuned_bt_eng, file = here("results/tuned_bt_eng.rda"))
 
-null_Fit |> 
-  collect_metrics() |> 
-  filter(.metric == "rmse") |> 
-  arrange((mean))
 

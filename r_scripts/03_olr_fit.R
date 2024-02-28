@@ -32,25 +32,6 @@ lm_spec <-
   set_engine("lm") |> 
   set_mode("regression") 
 
-# define workflows ----
-lm_wflow <-
-  workflow() |> 
-  add_model(lm_spec) |> 
-  add_recipe(sink_recipe)
-
-# fit workflows/models ----
-set.seed(925)
-olr_lm_fit <- fit_resamples(lm_wflow, 
-                        resamples = cars_folds,
-                        control = control_resamples(save_workflow = TRUE))
-
-# save out results
-save(olr_lm_fit, file = here("results/olr_lm_fit.rda"))
-
-load(here("results/olr_lm_fit.rda"))
-
-olr_lm_fit |> collect_metrics()
-
 # new recipe version.
 lm_wflow_eng <-
   workflow() |> 
@@ -63,7 +44,6 @@ olr_lm_fit_eng <- fit_resamples(lm_wflow_eng,
                                 control = control_resamples(save_workflow = TRUE))
 
 olr_lm_fit_eng |> collect_metrics()
-# ah shoot did I overfit?
 
 # save out results
 save(olr_lm_fit_eng, file = here("results/olr_lm_fit_eng.rda"))

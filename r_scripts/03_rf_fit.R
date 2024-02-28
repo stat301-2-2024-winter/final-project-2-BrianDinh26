@@ -37,10 +37,10 @@ rf_spec <-
   set_engine("ranger")
 
 # define workflows ----
-rf_workflow <-
+rf_workflow_eng <-
   workflow() |> 
   add_model(rf_spec) |> 
-  add_recipe(tree_recipe)
+  add_recipe(engineered_tree_recipe)
 
 # check ranges for hyperparameters
 hardhat::extract_parameter_set_dials(rf_spec)
@@ -56,28 +56,6 @@ rf_params <- parameters(rf_spec) |>
 rf_grid <- grid_regular(rf_params, levels = 5)
 
 # fit workflows/models ----
-set.seed(925)
-rf_fit <- tune_grid(rf_workflow, 
-                        resamples = cars_folds,
-                        grid = rf_grid,
-                        control = control_resamples(save_workflow = TRUE))
-
-# save out results
-save(rf_fit, file = here("results/rf_fit.rda"))
-
-load(here("results/rf_fit.rda"))
-
-rf_fit |> collect_metrics() |> 
-  filter(.metric == "rmse") |> 
-  arrange((mean))
-
-# the feature engineered rf model
-
-rf_workflow_eng <-
-  workflow() |> 
-  add_model(rf_spec) |> 
-  add_recipe(engineered_tree_recipe)
-
 set.seed(925)
 rf_fit_eng <- tune_grid(rf_workflow_eng, 
                     resamples = cars_folds,

@@ -201,10 +201,36 @@ cars_train |>
   geom_density() +
   facet_wrap(~ manufacturer_name)
 
+e_cap_type <- cars_train |> 
+  ggplot(aes(x = engine_capacity)) +
+  geom_density() +
+  facet_wrap(~ engine_type) +
+  labs(y = "Density", 
+       x = "Engine Capacity",
+       title = "Engine Capacity by Type")
+
+dur_exch <- cars_train |> 
+  ggplot(aes(x = duration_listed)) +
+  geom_density() +
+  facet_wrap(~ is_exchangeable) +
+  xlim(0, 250) +
+  labs(title = "Is Exchangeable Compared to Duration Listed",
+       x = "Duration Listed",
+       y = "Density")
+
+manf <- cars_train |> 
+  ggplot(aes(x = year_produced)) +
+  geom_density() +
+  facet_wrap(~ manufacturer_name) +
+  theme(panel.spacing = unit(1.2, "lines")) +
+  labs(x = "Year Produced",
+       y = "Density",
+       title = "Car Year Produced Compared to Manufacturer")
+
+
 og_v_log_price <- (price_original_distribution | log_price_distribution)
 log_original_engine <- (engine_capacity_distribution | engine_capacity_log_distribution)
-categorical_exploration_1 <- (numb_exch / numb_body)
-categorical_exploration_2 <-  (dur_list / dur_drive)
+categorical_exploration_1 <- (dur_exch / e_cap_type)
 log_original_photos <- (photos_distribution | photos_log_distribution)
 
 save(og_v_log_price,
@@ -212,7 +238,7 @@ save(og_v_log_price,
      log_original_photos,
      cars_train_corr,
      categorical_exploration_1,
-     categorical_exploration_2,
+     manf,
      missingness_check,
      file = here("figures/data_exploration.rda"))
 

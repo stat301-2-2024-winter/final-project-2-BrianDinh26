@@ -34,9 +34,11 @@ knn_spec <-
 
 
 # define workflows ----
-knn_workflow <- workflow() |> 
+knn_workflow_eng <-
+  workflow() |> 
   add_model(knn_spec) |> 
-  add_recipe(tree_recipe)
+  add_recipe(engineered_tree_recipe)
+
 
 # check hyperparameters
 knn_params <- hardhat::extract_parameter_set_dials(knn_spec)
@@ -44,28 +46,6 @@ knn_params <- hardhat::extract_parameter_set_dials(knn_spec)
 
 # grid
 knn_grid <- grid_regular(knn_params, levels = 5)
-
-# fit workflows/models ----
-set.seed(925)
-tuned_knn <- tune_grid(knn_workflow,
-                       cars_folds,
-                       grid = elastic_grid,
-                       control = control_grid(save_workflow = TRUE))
-
-# write out results (fitted/trained workflows) ----
-save(tuned_knn, file = here("results/tuned_knn.rda"))
-
-tuned_knn |> 
-  collect_metrics() |>
-  filter(.metric == "rmse") |> 
-  arrange((mean))
-
-# the feature engineered knn model
-
-knn_workflow_eng <-
-  workflow() |> 
-  add_model(knn_spec) |> 
-  add_recipe(engineered_tree_recipe)
 
 set.seed(925)
 knn_fit_eng <- tune_grid(knn_workflow_eng, 
@@ -79,3 +59,4 @@ knn_fit_eng |>
   arrange((mean))
 
 save(knn_fit_eng, file = here("results/tuned_knn_eng.rda"))
+

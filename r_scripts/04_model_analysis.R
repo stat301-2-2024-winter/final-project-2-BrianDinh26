@@ -35,43 +35,28 @@ load(file = here("results/olr_lm_fit_eng.rda"))
 load(file = here("results/null_fit_eng.rda"))
 
 
-#combine all models into a table
+#check null model
 table_null <- null_fit |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
-  mutate(model = "null")
-
-table_olr <- olr_lm_fit |> collect_metrics() |> 
-  filter(.metric == 'rmse') |> 
-  mutate(model = "olr")
-
-table_rf <- rf_fit |> collect_metrics() |> 
-  filter(.metric == 'rmse') |> 
-  mutate(model = "rf")
-
-table_bt <- tuned_bt |> collect_metrics() |> 
-  filter(.metric == 'rmse') |> 
-  mutate(model = "bt")
-
-table_elastic <- tuned_elastic |> collect_metrics() |> 
-  filter(.metric == 'rmse') |> 
-  mutate(model = "elastic")
-
-table_knn <- tuned_knn |> collect_metrics() |> 
-  filter(.metric == 'rmse') |> 
-  mutate(model = "knn")
-
-kitchen_sink_metric_table <- bind_rows(table_null, table_olr, table_rf,
-                                       table_bt, table_elastic, table_knn) |> 
-  slice_min(mean, by = model) |> 
-  arrange(mean) |> 
-  select(model, .metric, mean, std_err) |> 
+  mutate(model = "null") |> 
+  select(mean, n, std_err, model) |> 
   rename(
-    Model = model,
-    Metric = .metric,
-    Mean = mean,
-    "Standard Error" = std_err
-  ) |> 
-  distinct(Model, .keep_all = TRUE)
+    RMSE = mean,
+    Repeats = n,
+    "Standard Error" = std_err,
+    Model = model
+  )
+
+table_olr |> olr_lm_fit |> collect_metrics() |> 
+  filter(.metric == 'rmse') |> 
+  mutate(model = "null") |> 
+  select(mean, n, std_err, model) |> 
+  rename(
+    RMSE = mean,
+    Repeats = n,
+    "Standard Error" = std_err,
+    Model = model
+  )
 
 pm_2_table <- bind_rows(table_null, table_olr) |> 
   select(model, .metric, mean, std_err) |> 
@@ -112,9 +97,10 @@ rf_select <- select_best(rf_fit_eng, metric = "rmse") |>
   )
 
 #combine all models into a table (final)
-table_null_eng <- null_fit_eng |> collect_metrics() |> 
+table_null_2 <- null_fit |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
   mutate(model = "null")
+
 
 table_olr_eng <- olr_lm_fit_eng |> collect_metrics() |> 
   filter(.metric == 'rmse') |> 
@@ -136,25 +122,21 @@ table_knn_eng <- knn_fit_eng |> collect_metrics() |>
   filter(.metric == 'rmse') |> 
   mutate(model = "knn")
 
-engineered_final_table <- bind_rows(table_null_eng, table_olr_eng, table_rf_eng,
+engineered_final_table <- bind_rows(table_null_2, table_olr_eng, table_rf_eng,
                                        table_bt_eng, table_elastic_eng, table_knn_eng) |> 
   slice_min(mean, by = model) |> 
   arrange(mean) |> 
-  select(model, .metric, mean, std_err) |> 
+  select(model, mean, std_err) |> 
   rename(
     Model = model,
-    Metric = .metric,
-    Mean = mean,
+    RMSE = mean,
     "Standard Error" = std_err
   ) |> 
   distinct(Model, .keep_all = TRUE)
 
 # save out results
 save(pm_2_table, file = here("figures/pm_2_table.rda"))
-save(kitchen_sink_metric_table, file = here("figures/kitchen_sink_metric_table.rda"))
 save(knn_select, elastic_select, bt_select, rf_select, file = here("figures/best_hyperparameters.rda"))
+save(table_null, file = here("figures/table_null.rda"))
+save(engineered_final_table, file = here("figures/engineered_final_table.rda"))
 
-
-rf_fit_eng |> collect_metrics() |> 
-  filter(.metric == 'rmse') |> 
-  arrange(mean)

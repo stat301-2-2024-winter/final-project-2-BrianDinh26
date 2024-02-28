@@ -40,6 +40,8 @@ library(here)
 load(here("figures/data_exploration.rda"))
 load(here("figures/kitchen_sink_metric_table.rda"))
 load(here("figures/best_hyperparameters.rda"))
+load(here("figures/table_null.rda"))
+load(here("figures/engineered_final_table.rda"))
 ```
 
 
@@ -59,7 +61,7 @@ For the used cars dataset, there are 30 variables and 38,531 observations. There
 
 og_v_log_price
 ```
-Based on @fig-og-log-price, the original distribution of `price_usd` is extremely skewed. In comparison, the log transformed version of `price_usd`, although skewed, is less disparate, and therefore I will use the log transofmred version of `price_usd` in my model building.
+Based on @fig-og-log-price, the original distribution of `price_usd` is extremely skewed. In comparison, the log transformed version of `price_usd`, although skewed, is less disparate, and therefore I will use the log transformed version of `price_usd` in my model building.
 
 ```{r}
 #| echo: false
@@ -82,7 +84,7 @@ I chose to explore the training data to see if there were any relationships betw
 cars_train_corr |> 
   knitr::kable()
 ```
-To begin, I created a correlation matrix to see what numerical variables were correlated with one another. Based on @tbl-corr-matrix, there appear to be correlations between `duration_listed` and `up_counter`, `duration_listed` and `number_of_photos` and `odometer_value` and `year_produced`. It also appears that `year_produced` highly correlates with `price_usd`.
+To begin, I created a correlation matrix to see what numerical variables were correlated with one another. Based on @tbl-corr-matrix, there appear to be correlations between `duration_listed` and `up_counter`.
 
 ```{r}
 #| echo: false
@@ -97,20 +99,20 @@ Next, I explored the distributions of the numerical variables in my training dat
 
 ```{r}
 #| echo: false
-#| fig-cap: "Exploration of Categorical Variables and Number of Photos"
+#| fig-cap: "Exploration of Categorical Variables"
 #| label: fig-categorical-exploration-1
 
 categorical_exploration_1
 ```
 ```{r}
 #| echo: false
-#| fig-cap: "Exploration of Categorical Variables and Duration Listed"
+#| fig-cap: "Car Year Produced Compared to Manufacturer"
 #| label: fig-categorical-exploration-2
 
-categorical_exploration_2
+manf
 ```
 
-Last of all, I explored how categorical variables affected the distributions of numeric variables in the dataset. Based on my exploration, some of which can be seen in @fig-categorical-exploration-1 and @fig-categorical-exploration-2, there were no major differentiations in numerical distributions or trends depending on the categorical variables I analyzed. 
+Last of all, I explored how categorical variables affected the distributions of numeric variables in the dataset. Based on my exploration, as seen in @fig-categorical-exploration-1 and @fig-categorical-exploration-2, there were associations between `engine_type` and `engine_capacity`, `is_exchangeable` and `duration_listed`, and `manufacturer_name` and `year_produced`. 
 
 
 # Methods {#sec-methods}
@@ -127,26 +129,26 @@ Additionally, I will be building three models that will be using a tree-based re
 The resampling technique used will be v-fold cross-validation, with 10 folds and 5 repeats, meaning there will be 10 sets of performance metrics and 5 repetitions of the process. This process is meant to improve the model's accuracy and prevent overfitting through its repetitions and averaging out the results.
 
 ## Recipes 
-The first recipe that will be used is a baseline, "kitchen sink" recipe, which is a basic recipe with minimal steps that will allow for the model to run. This recipe will be applied to all models as a means to evaluate a baseline, especially with the null model. 
+The first recipe that will be used is a baseline, "kitchen sink" recipe, which is a basic recipe with minimal steps that will allow for the model to run. This recipe will be used for the null model, which will act as my baseline.
 
-The second recipe used will be a feature engineered recipe for linear models, where the recipe is modified to include possible interactions and transformations that appear to be correlated or related. In particular, for the case of my used cars dataset, my feature engineered recipe includes performing a log transformation on the `engine_capacity` and `number_of_photos` variables and creating interactions between `duration_listed` and `up_counter`, `duration_listed` and `number_of_photos`, and `odometer_value` and `year_produced`. These decisions were made based on the data exploration performed in @sec-data-exploration, where I concluded that there were interactions between these variables or a need to transform the data in order to improve upon the model.
+The second recipe used will be a feature engineered recipe for linear models, where the recipe is modified to include possible interactions and transformations that appear to be correlated or related. In particular, for the case of my used cars dataset, my feature engineered recipe includes performing a log transformation on the `engine_capacity` and `number_of_photos` variables and creating interactions between `duration_listed` and `up_counter`, `engine_type` and `engine_capacity`, `is_exchangeable` and `duration_listed`, and `manufacturer_name` and `year_produced`. Additionally, I removed `color` and `engine_has_gas` in this recipe because `color` had too many variables to consider that did not appear to modify price much and `engine_has_gas` followed similarly to `engine_type`. These decisions were made based on the data exploration performed in @sec-data-exploration, where I concluded that there were interactions between these variables or a need to transform the data in order to improve upon the model.
 
 The third recipe used will be a feature engineered recipe for tree-based models. The recipe is almost the same as the second recipe, but all factor variables will instead be one-hot encoded because the recipe will be used on tree-based models.
 
 # Model Building & Selection Results
-## Baseline Recipe Model Results
-Initially, I applied the baseline, "kitchen sink" recipe to each model and chose the best RMSE value of each dataset, as RMSE is the metric by which I am comparing models and will determine the final model. 
+## Baseline Null Model with Kitchen Sink Recipe Results
+Initially, I applied the baseline, "kitchen sink" recipe to the null model and found its RMSE, as RMSE is the metric by which I am comparing models and will determine the final model. 
 
 ```{r}
 #| echo: false
-#| tbl-cap: "Table Comparing RMSEs of All Models Using Baseline Recipe"
+#| tbl-cap: "Baseline RMSE from Null Model"
 #| label: tbl-rmse-baseline 
 
-kitchen_sink_metric_table |> 
+table_null |> 
   knitr::kable()
 ```
 
-According to @tbl-rmse-baseline, the best performing model is the random forest model, with an RMSE of approximately 0.3646289, while the worst performing model was the null model, with an RMSE of approximately 1.0274980. It appears that there is room to improve on the baseline model because of the relatively high RMSE value.
+According to @tbl-rmse-baseline, the null model's RMSE is 1.027498.
 
 ## Best Hyperparameters for Feature Engineered Recipe Models
 Next, I used the feature engineered recipes for the parametric and tree-based models and found the best hyperparameters for the models that were tuned, based on the lowest RMSE found for each model. For the null model and the ordinary linear regression model, there was no tuning of hyperparameters involved because they do not have relevant hyperparameters to look at.
@@ -159,7 +161,7 @@ Next, I used the feature engineered recipes for the parametric and tree-based mo
 elastic_select |> 
   knitr::kable(digits = c(15, 1, NA))
 ```
-According to @tbl-elastic-hyper, the best hyperparameters for the elastic net model is a penalty value of effectively 0 and a mixture of 1, indicating that a lasso regression results in the best RMSE when using the elastic net model.
+According to @tbl-elastic-hyper, the best hyperparameters for the elastic net model is a penalty value of 0.0000000001, which is effectively 0, and a mixture of 0.5, indicating a mix between the lasso and ridge regression.
 
 ```{r}
 #| echo: false
@@ -179,7 +181,7 @@ Based on @tbl-knn-hyper, the best model for the k-nearest neighbors model has tu
 bt_select |> 
   knitr::kable()
 ```
-According to @tbl-bt-hyper, the best hyperparameters for the boosted tree model are 14 for the number of randomly drawn candidate variables, 21 for the minimum number of models, and a learn rate of approximately 0.6309573.
+According to @tbl-bt-hyper, the best hyperparameters for the boosted tree model are 14 for the number of randomly drawn candidate variables, 2 for the minimum number of models, and a learn rate of approximately 0.6309573.
 
 ```{r}
 #| echo: false
@@ -194,12 +196,18 @@ Last of all, for the random forest model, the best hyperparameters for the rando
 For the number of randomly drawn candidate variables in my random forest and boosted tree models, I had my range for tuning set to a maximum of 14, so it is likely that further tuning could be explored by increasing this value when setting tuning limits.
 
 ## Feature Engineered Recipe Model Results
-After analyzing the hyperparameters, I compared the results of the models that used the feature engineered recipe to one another with the metric of RMSE.
+After analyzing the best hyperparameters for the appropriate models, I compared the results of the models that used the feature engineered recipe to one another with the metric of RMSE.
 
 ```{r}
+#| echo: false
+#| tbl-cap: "Comparison of RMSEs of Each Model"
+#| label: tbl-rmse-comparison
 
+engineered_final_table |> 
+  knitr::kable()
 ```
 
+Based on the table above, the random forest model will act as the final model, as it it has the lowest RMSE value out of the six models, indicating lower error and therefore stronger accuracy. I was not surprised that the random forest model won because of its complexity relative to the other models, although I was surprised at how strong the ordinary linear regression performed, with an RMSE of 0.3661882, because I did not tune any parameters for it. I expected the models that involved tuning hyperparameters, such as the boosted tree, elastic net, and k-nearest neighbors model, to perform better than the ordinary linear regression model, although the ordinary linear regression model may have had a lower RMSE because I removed some categorical variables, such as `color` and `engine_has_gas`, that I deemd to be disruptive to the model.
 
 
 # Final Model Analysis
