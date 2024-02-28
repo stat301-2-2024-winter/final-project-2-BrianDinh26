@@ -42,6 +42,7 @@ load(here("figures/kitchen_sink_metric_table.rda"))
 load(here("figures/best_hyperparameters.rda"))
 load(here("figures/table_null.rda"))
 load(here("figures/engineered_final_table.rda"))
+load(here("figures/assess_final.rda"))
 ```
 
 
@@ -207,11 +208,37 @@ engineered_final_table |>
   knitr::kable()
 ```
 
-Based on the table above, the random forest model will act as the final model, as it it has the lowest RMSE value out of the six models, indicating lower error and therefore stronger accuracy. I was not surprised that the random forest model won because of its complexity relative to the other models, although I was surprised at how strong the ordinary linear regression performed, with an RMSE of 0.3661882, because I did not tune any parameters for it. I expected the models that involved tuning hyperparameters, such as the boosted tree, elastic net, and k-nearest neighbors model, to perform better than the ordinary linear regression model, although the ordinary linear regression model may have had a lower RMSE because I removed some categorical variables, such as `color` and `engine_has_gas`, that I deemd to be disruptive to the model.
-
+Based on @tbl-rmse-comparison, the random forest model will act as the final model, as it it has the lowest RMSE value out of the six models, indicating lower error and therefore stronger accuracy. I was not surprised that the random forest model won because of its complexity relative to the other models, although I was surprised at how strong the ordinary linear regression performed, with an RMSE of 0.3661882, because I did not tune any parameters for it. I expected the models that involved tuning hyperparameters, such as the boosted tree, elastic net, and k-nearest neighbors model, to perform better than the ordinary linear regression model, although the ordinary linear regression model may have had a lower RMSE because I removed some categorical variables, such as `color` and `engine_has_gas`, that I deemd to be disruptive to the model.
 
 # Final Model Analysis
+```{r}
+#| echo: false
+#| tbl-cap: "Final Model Statistics"
+#| label: tbl-final-model-stats
 
+final_predict_stats |> 
+  knitr::kable()
+```
+
+(insert analysis here later)
+
+```{r}
+#| echo: false
+#| fig-cap: "Observed vs. Predicted Log Transformed Prices (USD)"
+#| label: fig-log-price-graph
+
+predict_vs_obs_plot
+```
+
+(analysis)
+```{r}
+#| echo: false
+#| fig-cap: "Observed vs. Predicted Prices (USD)"
+#| label: fig-price-graph
+
+predict_vs_obs_plot_original
+```
+(analysis)
 
 # Conclusions
 
