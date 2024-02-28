@@ -208,9 +208,11 @@ engineered_final_table |>
   knitr::kable()
 ```
 
-Based on @tbl-rmse-comparison, the random forest model will act as the final model, as it it has the lowest RMSE value out of the six models, indicating lower error and therefore stronger accuracy. I was not surprised that the random forest model won because of its complexity relative to the other models, although I was surprised at how strong the ordinary linear regression performed, with an RMSE of 0.3661882, because I did not tune any parameters for it. I expected the models that involved tuning hyperparameters, such as the boosted tree, elastic net, and k-nearest neighbors model, to perform better than the ordinary linear regression model, although the ordinary linear regression model may have had a lower RMSE because I removed some categorical variables, such as `color` and `engine_has_gas`, that I deemd to be disruptive to the model.
+Based on @tbl-rmse-comparison, the random forest model will act as the final model, as it it has the lowest RMSE value out of the six models, indicating lower error and therefore stronger accuracy. I was not surprised that the random forest model won because of its complexity relative to the other models, although I was surprised at how strong the ordinary linear regression performed, with an RMSE of 0.3661882, because I did not tune any parameters for it. I expected the models that involved tuning hyperparameters, such as the boosted tree, elastic net, and k-nearest neighbors model, to perform better than the ordinary linear regression model, although the ordinary linear regression model may have had a lower RMSE because I removed some categorical variables, such as `color` and `engine_has_gas`, that I deemed to be disruptive to the model.
 
 # Final Model Analysis
+
+After determining that the best model was the random forest model, I fit and trained the final model using the training dataset and predicted the values of the testing dataset.
 ```{r}
 #| echo: false
 #| tbl-cap: "Final Model Statistics"
@@ -219,8 +221,7 @@ Based on @tbl-rmse-comparison, the random forest model will act as the final mod
 final_predict_stats |> 
   knitr::kable()
 ```
-
-(insert analysis here later)
+Based on @tbl-final-model-stats, the RMSE is 0.3639547, the mean average error (MAE) is 0.2485033, and the $R^2$ is 0.8778823. Although the RMSE is slightly higher than that of the RMSE for the random forest model as seen in @tbl-rmse-comparison, the RMSE is relatively lower than all the other models. Additionally, the MAE is quite low, indicating less error involved in the model. The value for $R^2$ indicates that approximately 87.78% of the results can be explained by the model, which is quite high. Next, I comapred the results of the predicted and actual values on a graph.
 
 ```{r}
 #| echo: false
@@ -229,8 +230,8 @@ final_predict_stats |>
 
 predict_vs_obs_plot
 ```
+Looking at @fig-log-price-graph, the values appear to be highly close together relative to predicted and observed values. However, let us look at the transformed price levels to see the accuracy of the model, because log values can be grouped much closer than the actual price.
 
-(analysis)
 ```{r}
 #| echo: false
 #| fig-cap: "Observed vs. Predicted Prices (USD)"
@@ -238,8 +239,10 @@ predict_vs_obs_plot
 
 predict_vs_obs_plot_original
 ```
-(analysis)
+Based on @fig-price-graph, there appears to be more variation between the actual prices and predicted prices. More specifically, there tends to be some prices that are much higher in reality in comparison to the predicted price, but for the majority of the results, the predicted and actual prices appear quite close to one another. 
+
+According to the results of @fig-log-price-graph and @fig-log-price-graph, I believe that it was justified to use a random forest model due to the strength of its predictive performance. Additionally, based on @tbl-rmse-comparison, the RMSE for the baseline model is much higher than that of the final model. Thus, I think the effort involved in creating the model made sense, as it allowed for more accurate predictions. I believe the random forest model performed the best because of its felxibility in handling nonlinear relationships, because there were many variables that did not immediately have noticeable correlations due to their nonlinearity when graphed and calculated.
 
 # Conclusions
-
+mention what did the best, what to do in the future, and also future insights/things to explore (research questions for the future)
 
