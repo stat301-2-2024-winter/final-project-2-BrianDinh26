@@ -1,5 +1,5 @@
 # Final Project, Brian Dinh ----
-# Define and fit a elastic net model.
+# Define and fit a elastic net model, kitchen sink recipe.
 # We use a random process when fitting, so we have to set a seed beforehand.
 
 # load packages ----
@@ -23,61 +23,44 @@ load(here("data_splits/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("recipes/sink_recipe.rda"))
-load(here("recipes/engineered_reg_recipe.rda"))
 
 set.seed(925)
 # model specifications ----
 elastic_spec <-
   linear_reg(penalty = tune(),
-             mixture = tune()) |> 
-  set_engine("glmnet") |> 
+             mixture = tune()) |>
+  set_engine("glmnet") |>
   set_mode("regression")
 
 
 # define workflows ----
-elastic_workflow_eng <- workflow() |> 
-  add_model(elastic_spec) |> 
-  add_recipe(engineered_reg_recipe)
-
-elastic_workflow <- workflow() |> 
-  add_model(elastic_spec) |> 
+elastic_workflow <- workflow() |>
+  add_model(elastic_spec) |>
   add_recipe(sink_recipe)
 
 # set hyperparameters (for later tuning)
-elastic_params <- hardhat::extract_parameter_set_dials(elastic_spec) |> 
+elastic_params <-
+  hardhat::extract_parameter_set_dials(elastic_spec) |>
   update(mixture = mixture(c(0, 1)),
          penalty = penalty(c(-1.75, 0)))
 
 # grid
 elastic_grid <- grid_regular(elastic_params, levels = 5)
 
-
-# fit workflows/models ----
-set.seed(925)
-tuned_elastic_eng <- tune_grid(elastic_workflow_eng,
-                           cars_folds,
-                           grid = elastic_grid,
-                           control = control_grid(save_workflow = TRUE))
-
-tuned_elastic_eng |> 
-  collect_metrics() |> 
-  filter(.metric == 'rmse') |> 
-  slice_min(mean) |> 
-  arrange(mean)
-
-save(tuned_elastic_eng, file = here("results/tuned_elastic_eng.rda"))
-
 # fit workflows/models ----
 set.seed(444)
-tuned_elastic <- tune_grid(elastic_workflow,
-                               cars_folds,
-                               grid = elastic_grid,
-                               control = control_grid(save_workflow = TRUE))
+tuned_elastic <- tune_grid(
+  elastic_workflow,
+  cars_folds,
+  grid = elastic_grid,
+  control = control_grid(save_workflow = TRUE)
+)
 
-tuned_elastic |> 
-  collect_metrics() |> 
-  filter(.metric == 'rmse') |> 
-  slice_min(mean) |> 
+tuned_elastic |>
+  collect_metrics() |>
+  filter(.metric == 'rmse') |>
+  slice_min(mean) |>
   arrange(mean)
 
+#write out results
 save(tuned_elastic, file = here("results/tuned_elastic.rda"))

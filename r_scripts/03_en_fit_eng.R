@@ -1,5 +1,5 @@
 # Final Project, Brian Dinh ----
-# Define and fit null model.
+# Define and fit a elastic net model, feature engineered recipe.
 # We use a random process when fitting, so we have to set a seed beforehand.
 
 # load packages ----
@@ -22,48 +22,46 @@ tidymodels_prefer()
 load(here("data_splits/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("recipes/sink_recipe.rda"))
 load(here("recipes/engineered_reg_recipe.rda"))
 
 set.seed(925)
-# model specifications
-null_spec <- null_model() |> 
-  set_engine("parsnip") |> 
+# model specifications ----
+elastic_spec <-
+  linear_reg(penalty = tune(),
+             mixture = tune()) |>
+  set_engine("glmnet") |>
   set_mode("regression")
 
-# set workflow
-null_workflow <- workflow() |>  
-  add_model(null_spec) |>  
-  add_recipe(sink_recipe)
 
-set.seed(925)
-null_fit <- null_workflow |> 
-  fit_resamples(
-    resamples = cars_folds, 
-    control = control_resamples(save_workflow = TRUE)
-  )
-
-# save out results
-save(null_fit, file = here("results/null_fit.rda"))
-
-load(file = here("results/null_fit.rda"))
-
-metric <- null_fit |> collect_metrics() |> 
-  filter(.metric == 'rmse')
-
-# new recipe version.
-null_wflow_eng <-
-  workflow() |> 
-  add_model(null_spec) |> 
+# define workflows ----
+elastic_workflow_eng <- workflow() |>
+  add_model(elastic_spec) |>
   add_recipe(engineered_reg_recipe)
 
+# set hyperparameters (for later tuning)
+elastic_params <-
+  hardhat::extract_parameter_set_dials(elastic_spec) |>
+  update(mixture = mixture(c(0, 1)),
+         penalty = penalty(c(-1.75, 0)))
+
+# grid
+elastic_grid <- grid_regular(elastic_params, levels = 5)
+
+
+# fit workflows/models ----
 set.seed(925)
-null_fit_eng <- fit_resamples(null_wflow_eng, 
-                                resamples = cars_folds,
-                                control = control_resamples(save_workflow = TRUE))
+tuned_elastic_eng <- tune_grid(
+  elastic_workflow_eng,
+  cars_folds,
+  grid = elastic_grid,
+  control = control_grid(save_workflow = TRUE)
+)
 
-metric2 <- null_fit_eng |> collect_metrics()
+tuned_elastic_eng |>
+  collect_metrics() |>
+  filter(.metric == 'rmse') |>
+  slice_min(mean) |>
+  arrange(mean)
 
-# save out results
-save(null_fit_eng, file = here("results/null_fit_eng.rda"))
-
+# write out results
+save(tuned_elastic_eng, file = here("results/tuned_elastic_eng.rda"))

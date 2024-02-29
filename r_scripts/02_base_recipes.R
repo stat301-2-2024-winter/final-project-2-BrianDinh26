@@ -1,5 +1,5 @@
 # Final Project, Brian Dinh ----
-# Setup pre-processing/recipes
+# Setup pre-processing/recipes, kitchen sink
 
 # load packages ----
 library(tidyverse)
@@ -29,6 +29,7 @@ tree_recipe <- recipe(price_usd ~ .,
   step_zv(all_predictors()) |> 
   step_normalize(all_numeric_predictors())
 
+# write out recipes
 save(sink_recipe, file = here("recipes/sink_recipe.rda"))
 save(tree_recipe, file = here("recipes/tree_recipe.rda"))
 

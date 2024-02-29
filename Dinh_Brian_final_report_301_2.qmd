@@ -42,6 +42,7 @@ load(here("figures/assess_final.rda"))
 load(here("figures/best_hyperparameters_1.rda"))
 load(here("figures/best_hyperparameters_2.rda"))
 load(here("figures/bt_autoplot.rda"))
+load(here("figures/missingness_check.rda"))
 
 ```
 

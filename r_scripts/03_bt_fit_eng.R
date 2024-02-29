@@ -1,11 +1,12 @@
 # Final Project, Brian Dinh ----
-# Define and fit null model.
+# Define and fit a boosted tree model, feature engineered recipe.
 # We use a random process when fitting, so we have to set a seed beforehand.
 
 # load packages ----
 library(tidyverse)
 library(tidymodels)
 library(here)
+library(xgboost)
 
 # mac user code for parallel processing
 library(doMC)
@@ -22,48 +23,51 @@ tidymodels_prefer()
 load(here("data_splits/cars_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("recipes/sink_recipe.rda"))
-load(here("recipes/engineered_reg_recipe.rda"))
+load(here("recipes/engineered_tree_recipe.rda"))
 
 set.seed(925)
-# model specifications
-null_spec <- null_model() |> 
-  set_engine("parsnip") |> 
-  set_mode("regression")
+# model specifications ----
+bt_model <- boost_tree(
+  mode = "regression",
+  min_n = tune(),
+  mtry = tune(),
+  trees = 500,
+  learn_rate = tune()
+) |>
+  set_engine("xgboost")
 
-# set workflow
-null_workflow <- workflow() |>  
-  add_model(null_spec) |>  
-  add_recipe(sink_recipe)
+# define workflows ----
+boost_workflow_eng <- workflow() |>
+  add_model(bt_model) |>
+  add_recipe(engineered_tree_recipe)
 
-set.seed(925)
-null_fit <- null_workflow |> 
-  fit_resamples(
-    resamples = cars_folds, 
-    control = control_resamples(save_workflow = TRUE)
+# check ranges for hyperparameters
+hardhat::extract_parameter_set_dials(bt_model)
+
+# change hyperparameter ranges
+bt_params <- hardhat::extract_parameter_set_dials(bt_model) |>
+  update(
+    mtry = mtry(c(1, 9)),
+    min_n = min_n(c(2, 15)),
+    learn_rate = learn_rate(range = c(-5,-0.2))
   )
 
-# save out results
-save(null_fit, file = here("results/null_fit.rda"))
+# build tuning grid
+bt_grid <- grid_regular(bt_params, levels = 5)
 
-load(file = here("results/null_fit.rda"))
-
-metric <- null_fit |> collect_metrics() |> 
-  filter(.metric == 'rmse')
-
-# new recipe version.
-null_wflow_eng <-
-  workflow() |> 
-  add_model(null_spec) |> 
-  add_recipe(engineered_reg_recipe)
-
+# fit workflows/models ----
 set.seed(925)
-null_fit_eng <- fit_resamples(null_wflow_eng, 
-                                resamples = cars_folds,
-                                control = control_resamples(save_workflow = TRUE))
+tuned_bt_eng <- tune_grid(
+  boost_workflow_eng,
+  cars_folds,
+  grid = bt_grid,
+  control = control_grid(save_workflow = TRUE)
+)
 
-metric2 <- null_fit_eng |> collect_metrics()
+tuned_bt_eng |>
+  collect_metrics() |>
+  filter(.metric == "rmse") |>
+  arrange((mean))
 
 # save out results
-save(null_fit_eng, file = here("results/null_fit_eng.rda"))
-
+save(tuned_bt_eng, file = here("results/tuned_bt_eng.rda"))
