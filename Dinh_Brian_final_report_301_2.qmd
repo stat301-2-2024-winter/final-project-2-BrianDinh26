@@ -284,6 +284,7 @@ After working on training and creating my predictive models, I learned that the 
 For future models, it may be beneficial to increase the minimal node size and learning rate ranges in order to increase performance. Additionally, for future recipes, possibly refrain from removing more categorical variables dude to the strength of tree based models when provided more categorical variable information. Possible research questions for the future would be to analyze what used cars are actually sold on such used cars websites and predict whether or not a car has been sold or not. Additionally, one may explore how used car prices compare to the current car market as well for newer models and see if the general prices of new cars affects how used cars are priced.
 
 # References
+- Lepchenkov, Kirill (2019, December). *Used-cars-catalog*. Kaggle. [https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog/data](https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog/data)
 
 
 # Appendix {#sec-appendix}
@@ -315,18 +316,17 @@ Next, I explored the distributions of the numerical variables in my training dat
 ```{r}
 #| echo: false
 #| fig-cap: "Exploration of Categorical Variables"
-#| label: fig-test
+#| label: fig-cat-exp
 
 categorical_exploration_1
 ```
 ```{r}
 #| echo: false
 #| fig-cap: "Car Year Produced Compared to Manufacturer"
-#| label: fig-yahoo
+#| label: fig-car-prod
 
 manf
 ```
 
-*note to self: need to check out how these labels work cause they currently just aren't???? weird qmd issue.
-Last of all, I explored how categorical variables affected the distributions of numeric variables in the dataset. Based on my exploration, as seen in @fig-test and @fig-yahoo, there were associations between the engine type and the engine capacity, if the car is exchangeable for another car and the duration listed for the car, and the manufacturer name and year produced.
+Based on my exploration, as seen in @fig-cat-exp and @fig-car-prod, there were associations between the engine type and the engine capacity, if the car is exchangeable for another car and the duration listed for the car, and the manufacturer name and year produced.
 
