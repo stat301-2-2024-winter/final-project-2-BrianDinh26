@@ -195,6 +195,24 @@ manf <- cars_train_eda |>
        y = "Density",
        title = "Car Year Produced Compared to Manufacturer")
 
+colors_price <- cars_train_eda |> 
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  facet_wrap( ~ color) +
+  theme(panel.spacing = unit(1.2, "lines")) +
+  labs(x = "Price (USD)",
+       y = "Density",
+       title = "Color Compared to Price (USD)")
+
+has_gas_price <- cars_train_eda |> 
+  ggplot(aes(x = price_usd)) +
+  geom_density() +
+  facet_wrap( ~ engine_has_gas) +
+  theme(panel.spacing = unit(1.2, "lines")) +
+  labs(x = "Price (USD)",
+       y = "Density",
+       title = "If the Engine Has Gas Compared to Price (USD)")
+
 
 # create patchwork graphs for data
 og_v_log_price <-
@@ -214,5 +232,8 @@ save(
   cars_train_corr,
   categorical_exploration_1,
   manf,
+  has_gas_price,
+  colors_price,
   file = here("figures/data_exploration.rda")
 )
+

@@ -1,6 +1,6 @@
 ## Overview
 
-This folder currently contains 1 RDA file for recipes.
+This folder contains 4 RDA files for recipes.
 
 ## RDA Files
 - `sink_recipe`: Contains recipe with minimal feature engineering, meant for parametric models.

@@ -1,6 +1,6 @@
 ## Overview
 
-The goals for this project is to create a regression model to predict prices of used cars on the market. 
+The goal for this project is to create a regression model to predict prices of used cars on the market. [The dataset can be found here.](https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog/data)
 
 ## Folders
 
@@ -15,3 +15,4 @@ The goals for this project is to create a regression model to predict prices of 
 ## Report Files
 
 - `Dinh_Brian_final_report_301_2`: Final report for final project.
+- `Dinh_Brian_executive_summary_301_2`: Executive summary for final project.

@@ -64,7 +64,7 @@ Based on @fig-rmse-best-hyp, the best values for the hyperparameters for the mod
 bt_autoplot
 ```
 
-When the final model was trained using the workflow from the boosted tree model with the recipe with minimal changes, the RMSE was slightly higher than that of the RMSE from the data originally trained on, with a value of 0.3403434, as seen in @tbl-final-model-stats. The mean average error was 0.2315781, meaning that the error was quite low in comparison to other models that were trained. Additionally, the $R^2$ is 0.8904937, which means that approximately 87.78% of the results can be explained by the model, which is quite high.
+When the final model was trained using the workflow from the boosted tree model with the recipe with minimal changes, the RMSE was slightly higher than that of the RMSE from the data originally trained on, with a value of 0.3403434, as seen in @tbl-final-model-stats. The mean average error was 0.2315781, meaning that the error was quite low in comparison to other models that were trained. Additionally, the $R^2$ is 0.8904937, which means that approximately 89.05% of the results can be explained by the model, which is quite high.
 ```{r}
 #| echo: false
 #| tbl-cap: "Final Model Statistics"
@@ -85,4 +85,4 @@ predict_vs_obs_plot_original
 ```
 
 # Future Questions and Explorations
-With this model in mind, one aspect to explore in the future with this dataset is increasing the minimal node size range in order to see at what point having a higher number range leaves diminishing returns relative to how long it takes to compute the model. Additionally, there is room to compare these used car prices in comparison to the new car market and see if the newer car prices can predict how used car prices change.
+With this model in mind, one aspect to explore in the future with this dataset is increasing the minimal node size range in order to see at what point having a higher number range leaves diminishing returns relative to how long it takes to compute the model. To add on, there is room to explore with removing more categorical variable as a means of increasing the performance of parametric models, such as ordinary linear regression, as the feature engineered recipe showed great improvements in lowering the RMSE in comparison to the baseline model that contained all variables. Additionally, there is room to compare these used car prices in comparison to the new car market and see if the newer car prices can predict how used car prices change.

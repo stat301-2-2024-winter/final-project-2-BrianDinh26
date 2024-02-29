@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Brian Dinh">
-<meta name="dcterms.date" content="2024-02-28">
+<meta name="dcterms.date" content="2024-02-29">
 
 <title>Executive Summary on Price Prediction Model for Online Used Car Sales</title>
 <style>
@@ -3035,7 +3035,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 28, 2024</p>
+      <p class="date">February 29, 2024</p>
     </div>
   </div>
   
@@ -3167,7 +3167,7 @@ Github Repo Link
 </div>
 </div>
 </div>
-<p>When the final model was trained using the workflow from the boosted tree model with the recipe with minimal changes, the RMSE was slightly higher than that of the RMSE from the data originally trained on, with a value of 0.3403434, as seen in <a href="#tbl-final-model-stats">Table 2</a>. The mean average error was 0.2315781, meaning that the error was quite low in comparison to other models that were trained. Additionally, the <span class="math inline">\(R^2\)</span> is 0.8904937, which means that approximately 87.78% of the results can be explained by the model, which is quite high.</p>
+<p>When the final model was trained using the workflow from the boosted tree model with the recipe with minimal changes, the RMSE was slightly higher than that of the RMSE from the data originally trained on, with a value of 0.3403434, as seen in <a href="#tbl-final-model-stats">Table 2</a>. The mean average error was 0.2315781, meaning that the error was quite low in comparison to other models that were trained. Additionally, the <span class="math inline">\(R^2\)</span> is 0.8904937, which means that approximately 89.05% of the results can be explained by the model, which is quite high.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="tbl-final-model-stats" class="anchored">
@@ -3211,7 +3211,7 @@ Github Repo Link
 </section>
 <section id="future-questions-and-explorations" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Future Questions and Explorations</h1>
-<p>With this model in mind, one aspect to explore in the future with this dataset is increasing the minimal node size range in order to see at what point having a higher number range leaves diminishing returns relative to how long it takes to compute the model. Additionally, there is room to compare these used car prices in comparison to the new car market and see if the newer car prices can predict how used car prices change.</p>
+<p>With this model in mind, one aspect to explore in the future with this dataset is increasing the minimal node size range in order to see at what point having a higher number range leaves diminishing returns relative to how long it takes to compute the model. To add on, there is room to explore with removing more categorical variable as a means of increasing the performance of parametric models, such as ordinary linear regression, as the feature engineered recipe showed great improvements in lowering the RMSE in comparison to the baseline model that contained all variables. Additionally, there is room to compare these used car prices in comparison to the new car market and see if the newer car prices can predict how used car prices change.</p>
 </section>
 
 

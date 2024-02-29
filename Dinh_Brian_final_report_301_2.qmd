@@ -74,35 +74,27 @@ missingness_check
 
 According to @fig-missing-check, there are only misingness issues with the engine capacity, with 10 observations out of the 38,531 observations registering as not available. To deal with this missingness, I will impute the missing observations with the k-nearest neighbors method in the recipes for the model, meaning that the nearest datapoints to the missing observation will be used to guess what the missing value is.
 
-Additionally, I used an 80/20 split of my training data to explore possible relationships in the training dataset, meaning that 80% of the selected data from the training dataset will be used to explore relationships and 20% of the selected data will be used to evaluate the model as the testing dataset. Based on my exploratory data analysis, there appear to be correlations between the duration listed for the car and the number of upvotes on the site (which means how many times the car has been promoted), the engine type and the engine capacity, if the car is exchangeable for another car and the duration listed for the car, and the manufacturer name and year produced. Additionally, there appears a need to log transform the engine capacity and the number of photos, meaning that the log of the data will be taken, as these datapoints appear to have overly skewed distributions. For more information on the exploration methods, please refer to @sec-appendix.
+Additionally, I used an 80/20 split of my training data to explore possible relationships in the training dataset, meaning that 80% of the selected data from the training dataset will be used to explore relationships and 20% of the selected data will be used to evaluate the model as the testing dataset. Based on my exploratory data analysis, there appear to be correlations between the duration listed for the car and the number of upvotes on the site (which means how many times the car has been promoted), the engine type and the engine capacity, if the car is exchangeable for another car and the duration listed for the car, and the manufacturer name and year produced. Additionally, there appears a need to log transform the engine capacity and the number of photos, meaning that the log of the data will be taken, as these datapoints appear to have overly skewed distributions. For more information on the exploration methods, please refer to @sec-data-exploration.
 
 # Methods {#sec-methods}
-For the used cars dataset, I will implement an 80 / 20 split, meaning approximately 80% of the data will be used for training the model, and 20% of the data will be used to test how successful the model is. 
-
-In the models I am building, I am using the Root Mean Squared Error (RMSE) as my primary metric to evaluate because I am using regression to predict the price of a car online. The RMSE is the average difference between values predicted by a model and the actual values, meaning the lower the better. The model with the lowest RMSE relative to the other models will be selected as the final model.
+For the used cars dataset, I will implement an 80 / 20 split, meaning approximately 80% of the data will be used for training the model, and 20% of the data will be used to test how successful the model is. Additionally, in the models I am building, I am using the Root Mean Squared Error (RMSE) as my primary metric to evaluate because I am using regression to predict the price of a car online. The RMSE is the average difference between values predicted by a model and the actual values, meaning the lower the better. The model with the lowest RMSE relative to the other models will be selected as the final model.
 
 I will be using a total of six models for this report. First off, my baseline model will be the null model, which will serve as a measuring stick for the performance of more complex models. No main arguments will be provided to the null model.
 
-I will be building two linear models that will be using a recipe for parametric models: A standard linear regression model and an elastic net model. The standard linear regression model does not have any parameters that will be tuned. For the elastic net model, I will tune the penalty, which is how much parameters get shrunk, and mixture of the model, which determines the type of regression the model has.
+I will be building two models that will be using a recipe for parametric models: A standard linear regression model and an elastic net model. The standard linear regression model does not have any parameters that will be tuned. For the elastic net model, I will tune the penalty, which is how much parameters get shrunk, and mixture of the model, which determines the type of regression the model has.
 
-Additionally, I will be building three models that will be using a tree-based recipe: A random forest model, a boosted tree model, and a k-nearest neighbors model. 
-
-The random forest model will tune the minimum number of datapoints for a split in a node over a range of 1 to 9 and the number of predictors that will be randomly sampled at each split over a range of 2 to 15, while the number of trees, which are the splits of prediction branches, being 500. 
-
-For the boosted tree model, I will tune the minimum number of datapoints for a split in a node over a range of 1 to 9, the number of predictors that will be randomly sampled at each split over a range of 2 to 15, and the rate at which the boosting algorithm adapts from iteration-to-iteration over a range of -5 to -0.2, with the number of trees being 500.
-
-For the k-nearest neighbors model, I will tune the number of neighbors in the model, which are the number of close datapoints used for predicting.
+Additionally, I will be building three models that will be using a tree-based recipe: A random forest model, a boosted tree model, and a k-nearest neighbors model. The random forest model will tune the minimum number of datapoints for a split in a node over a range of 1 to 9 and the number of predictors that will be randomly sampled at each split over a range of 2 to 15, while the number of trees, which are the splits of prediction branches, being 500. For the boosted tree model, I will tune the minimum number of datapoints for a split in a node over a range of 1 to 9, the number of predictors that will be randomly sampled at each split over a range of 2 to 15, and the rate at which the boosting algorithm adapts from iteration-to-iteration over a range of -5 to -0.2, with the number of trees being 500. For the k-nearest neighbors model, I will tune the number of neighbors in the model, which are the number of close datapoints used for predicting.
 
 The resampling technique used will be v-fold cross-validation, with 10 folds and 5 repeats, meaning there will be 10 sets of performance metrics and 5 repetitions of the process. This process is meant to improve the model's accuracy and prevent overfitting through its repetitions and averaging out the results.
 
 ## Recipes {#sec-recipes}
 Recipes are feature engineering steps used to prepare the data to use in a predictive model. For this report, I will be using two recipes, each with a variation for tree based recipes that have a different engine from parametric models, which are more linear.
 
-The first recipe that will be used is a baseline, "kitchen sink" recipe, which is a basic recipe with minimal steps that will allow for the model to run. In the baseline recipe I use, I initially remove the model name, location listing, and engine fuel type, because these variables have too many categories that clutter the predictive model. Then, I will convert all categorical variables to numeric variables in order to allow categorical variables to predict our regression result. Then, to deal with missingness for engine capacity, I will use the k-nearest neighbors method to predict to predict the missing variables using the data closest to it. Then, I will remove all variables with zero variance, because variables with zero variance do not give any information on what can help predict the price if all the values are the same. Last of all, I will normalize all variables, as it will help put the data on a similar scale and therefore improve the performance of the model.
+The first recipe that will be used is a baseline, "kitchen sink" recipe, which is a basic recipe with minimal steps that will allow for the model to run. In the baseline recipe I use, I initially remove the model name, location listing, and engine fuel type, because these variables have too many categories that clutter the predictive model. Then, I will convert all categorical variables to numeric variables in order to allow categorical variables to predict our regression result. Then, to deal with missingness for engine capacity, I will use the k-nearest neighbors method to predict the missing variables using the data closest to it. Then, I will remove all variables with zero variance, because variables with zero variance do not give any information on what can help predict the price if all the values are the same. Last of all, I will normalize all variables, as it will help put the data on a similar scale and therefore improve the performance of the model.
 
 I also created a tree-based verison of this recipe to use for tree-based models, where the difference is that when the categorical variables are converted to numerical variables, they are one hot encoded, which prepares the data better for the model by providing more complex labels to the data.
 
-The second recipe used will be a feature engineered recipe, where the recipe is modified to include possible interactions and transformations that appear to be correlated or related. For the first part of my recipe, I removed the model name, location listing, engine fuel type, color, and if the engine has gas from the dataset due to exploration that saw these variables having too many categories that cluttered the predictive model.  Then, I will convert all categorical variables to numeric variables in order to allow categorical variables to predict our regression result. Then, to deal with missingness for engine capacity, I will use the k-nearest neighbors method to predict to predict the missing variables using the data closest to it. Then, I will convert the engine capacity and number of photos to a log scale to deal with the skewed distribution fo the variables. Then I will create interactions between the duration listed and number of upvotes, the engine type and engine capacity, if the car is exchangeable for another car and the duration listed, and the manufcaturer name and year produced due to data exploration performed in @sec-data-exploration.
+The second recipe used will be a feature engineered recipe, where the recipe is modified to include possible interactions and transformations that appear to be correlated or related. For the first part of my recipe, I removed the model name, location listing, engine fuel type, color, and if the engine has gas from the dataset due to exploration that saw these variables having too many categories that cluttered the predictive model.  Then, I will convert all categorical variables to numeric variables in order to allow categorical variables to predict our regression result. Then, to deal with missingness for engine capacity, I will use the k-nearest neighbors method to predict the missing variables using the data closest to it. Then, I will convert the engine capacity and number of photos to a log scale to deal with the skewed distribution fo the variables. Then I will create interactions between the duration listed and number of upvotes, the engine type and engine capacity, if the car is exchangeable for another car and the duration listed, and the manufacturer name and year produced due to data exploration performed in @sec-data-exploration.
 
 Additionally, there will be a feature engineered recipe for tree-based models based on the second, feature engineered recipe. The recipe is almost the same as the second recipe, but all factor variables will instead be one-hot encoded because the recipe will be used on tree-based models, allowing for stronger predictions.
 
@@ -112,7 +104,7 @@ Initially, I applied the baseline, "kitchen sink" recipes to the models model an
 
 ```{r}
 #| echo: false
-#| tbl-cap: "RMSEs of Baseline Recipe Trained Models"
+#| tbl-cap: "RMSEs of Kitchen Sink Recipe Trained Models"
 #| label: tbl-rmse-baseline 
 
 kitchen_sink_table |> 
@@ -131,7 +123,7 @@ Then, I found the best hyperparameters for the models that were tuned, based on 
 elastic_select_1 |> 
   knitr::kable(digits = c(15, 1, NA))
 ```
-According to @tbl-elastic-hyper, the best hyperparameters for the elastic net model with the kitchen sink recipe is a penalty value of 0.01778279, and a mixture of 0.2, indicating a mix leaning more towards ridge regression than lasso regerssion.
+According to @tbl-elastic-hyper, the best hyperparameters for the elastic net model with the kitchen sink recipe is a penalty value of 0.01778279, and a mixture of 0.2, indicating a mix leaning more towards ridge regression than lasso regression.
 
 ```{r}
 #| echo: false
@@ -255,7 +247,7 @@ After determining that the best model was the random forest model, I fit and tra
 final_predict_stats |> 
   knitr::kable()
 ```
-Based on @tbl-final-model-stats, the RMSE is 0.3403434, the mean average error (MAE) is 0.2315781, and the $R^2$ is 0.8904937 Although the RMSE is slightly higher than that of the RMSE for the random forest model as seen in @tbl-rmse-comparison, the RMSE is relatively lower than all the other models. Additionally, the MAE is quite low, indicating less error involved in the model. The value for $R^2$ indicates that approximately 87.78% of the results can be explained by the model, which is quite high. Next, I compared the results of the predicted and actual values on a graph.
+Based on @tbl-final-model-stats, the RMSE is 0.3403434, the mean average error (MAE) is 0.2315781, and the $R^2$ is 0.8904937 Although the RMSE is slightly higher than that of the RMSE for the random forest model as seen in @tbl-rmse-comparison, the RMSE is relatively lower than all the other models. Additionally, the MAE is quite low, indicating less error involved in the model. The value for $R^2$ indicates that approximately 89.05% of the results can be explained by the model, which is quite high. Next, I compared the results of the predicted and actual values on a graph.
 
 ```{r}
 #| echo: false
@@ -328,4 +320,21 @@ manf
 ```
 
 Based on my exploration, as seen in @fig-cat-exp and @fig-car-prod, there were associations between the engine type and the engine capacity, if the car is exchangeable for another car and the duration listed for the car, and the manufacturer name and year produced.
+
+```{r}
+#| echo: false
+#| fig-cap: "If the Engine Has Gas Compared to Price (USD)"
+#| label: fig-gas-pr
+
+has_gas_price
+```
+```{r}
+#| echo: false
+#| fig-cap: "Color Compared to Price (USD)"
+#| label: fig-col-pr
+
+colors_price
+```
+
+According to @fig-gas-pr and @fig-col-pr, it seems that if an engine has gas and the color of the car do not make much difference in the price of the car. Therefore, I believe removing these variables will improve upon the model.
 
