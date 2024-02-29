@@ -38,11 +38,12 @@ library(tidyverse)
 library(here)
 
 load(here("figures/data_exploration.rda"))
-load(here("figures/kitchen_sink_metric_table.rda"))
 load(here("figures/best_hyperparameters.rda"))
-load(here("figures/table_null.rda"))
-load(here("figures/engineered_final_table.rda"))
+load(here("figures/rmse_tables.rda"))
 load(here("figures/assess_final.rda"))
+load(here("figures/best_hyperparameters_1.rda"))
+load(here("figures/best_hyperparameters_2.rda"))
+
 ```
 
 
@@ -83,9 +84,15 @@ In the models I am building, I am using the Root Mean Squared Error (RMSE) as my
 
 I will be using a total of six models for this report. First off, my baseline model will be the null model, which will serve as a measuring stick for the performance of more complex models. No main arguments will be provided to the null model.
 
-I will be building two linear models that will be using a recipe for parametric models: A standard linear regression model and an elastic net model. The standard linear regression model does not have any parameters that will be tuned. For the elastic net model, I will tune the penalty and mixture of the model.
+I will be building two linear models that will be using a recipe for parametric models: A standard linear regression model and an elastic net model. The standard linear regression model does not have any parameters that will be tuned. For the elastic net model, I will tune the penalty, which is how much parameters get shrunk, and mixture of the model, which determines the type of regression the model has.
 
-Additionally, I will be building three models that will be using a tree-based recipe: A random forest model, a boosted tree model, and a k-nearest neighbors model. The random forest model will tune the minimum number of datapoints for a split in a node and the number of predictors that will be randomly sampled at each split, while the number of trees will bet set at 100. For the boosted tree model, I will tune the minimum number of datapoints for a split in a node, the number of predictors that will be randomly sampled at each split, and the rate at which the boosting algorithm adapts from iteration-to-iteration. For the k-nearest neighbors model, I will tune the number of neighbors in the model, which are the number of close datapoints used for predicting.
+Additionally, I will be building three models that will be using a tree-based recipe: A random forest model, a boosted tree model, and a k-nearest neighbors model. 
+
+The random forest model will tune the minimum number of datapoints for a split in a node over a range of 1 to 9 and the number of predictors that will be randomly sampled at each split over a range of 2 to 15, while the number of trees, which are the splits of prediction branches, being 500. 
+
+For the boosted tree model, I will tune the minimum number of datapoints for a split in a node over a range of 1 to 9, the number of predictors that will be randomly sampled at each split over a range of 2 to 15, and the rate at which the boosting algorithm adapts from iteration-to-iteration over a range of -5 to -0.2, with the number of trees being 500.
+
+For the k-nearest neighbors model, I will tune the number of neighbors in the model, which are the number of close datapoints used for predicting.
 
 The resampling technique used will be v-fold cross-validation, with 10 folds and 5 repeats, meaning there will be 10 sets of performance metrics and 5 repetitions of the process. This process is meant to improve the model's accuracy and prevent overfitting through its repetitions and averaging out the results.
 
@@ -101,85 +108,130 @@ Additionally, there will be a feature engineered recipe for tree-based models ba
 
 # Model Building & Selection Results
 ## Kitchen Sink Recipe Model Results
-Initially, I applied the baseline, "kitchen sink" recipe to the null model and found its RMSE, as RMSE is the metric by which I am comparing models and will determine the final model. 
+Initially, I applied the baseline, "kitchen sink" recipes to the models model and found the RMSE for each, as RMSE is the metric by which I am comparing models and will determine the final model. 
 
 ```{r}
 #| echo: false
-#| tbl-cap: "RMSEs of Baseline Recipe Trained Modelsl"
+#| tbl-cap: "RMSEs of Baseline Recipe Trained Models"
 #| label: tbl-rmse-baseline 
 
-kitchen_sink_metric_table |> 
+kitchen_sink_table |> 
   knitr::kable()
 ```
 
-According to @tbl-rmse-baseline, the best performing model was the random forest model, with an RMSE of (insert here).
+According to @tbl-rmse-baseline, the best performing model using the kitchen sink recipe was the boosted tree model, with an RMSE of 0.3387086, which is significantly lower than the second-lowest model, the random forest model.
 
+Then, I found the best hyperparameters for the models that were tuned, based on the lowest RMSE found for each model that used the kitchen sink recipes. For the null model and the ordinary linear regression model, there was no tuning of hyperparameters involved because they do not have any relevant hyperparameters to look at.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the Elastic Net Model, Kitchen Sink"
+#| label: tbl-elastic-hyper
+
+elastic_select_1 |> 
+  knitr::kable(digits = c(15, 1, NA))
+```
+According to @tbl-elastic-hyper, the best hyperparameters for the elastic net model with the kitchen sink recipe is a penalty value of 0.01778279, and a mixture of 0.2, indicating a mix leaning more towards ridge regression than lasso regerssion.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the K-Nearest Neighbors Model, Kitchen Sink"
+#| label: tbl-knn-hyper
+
+knn_select_1 |> 
+  knitr::kable()
+```
+Based on @tbl-knn-hyper, the best model for the k-nearest neighbors model with the kitchen sink recipe has tuned a value of 15 for neighbors, indicating that the greater the neighbors, the lower the RMSE.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the Boosted Tree Model, Kitchen Sink"
+#| label: tbl-bt-hyper
+
+bt_select_1 |> 
+  knitr::kable()
+```
+According to @tbl-bt-hyper, the best hyperparameters for the boosted tree model with the kitchen sink recipe are 9 for the number of randomly drawn candidate variables, 5 for the minimum number of variables before a split, and a learn rate of approximately 0.0398107.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the Random Forest Model, Kitchen Sink"
+#| label: tbl-rf-hyper
+
+rf_select_1 |> 
+  knitr::kable()
+```
+Last of all, for the random forest model, the best hyperparameters for the random forest model with the kitchen sink recipe, based on @tbl-rf-hyper, are 9 for the number of randomly drawn candidate variables and 2 for the minimum number of variables before a split. It appears that for both the boosted tree and random forest model, the higher the number of randomly drawn candidate variables, the lower the RMSE, while the minimum number of variables before a split varied.
 
 
 ## Feature Engineered Recipe Model Results
-First, I used the feature engineered recipes for the parametric and tree-based models and found the best hyperparameters for the models that were tuned, based on the lowest RMSE found for each model. For the null model and the ordinary linear regression model, there was no tuning of hyperparameters involved because they do not have any relevant hyperparameters to look at.
+Next, I used the feature engineered recipes to the models model and found the RMSE for each.
 
 ```{r}
 #| echo: false
-#| tbl-cap: "Best Hyperparameters for the Elastic Net Model"
-#| label: tbl-elastic-hyper
-
-elastic_select |> 
-  knitr::kable(digits = c(15, 1, NA))
-```
-According to @tbl-elastic-hyper, the best hyperparameters for the elastic net model is a penalty value of (INSERT), and a mixture of (INSERT), indicating a mix between the lasso and ridge regression.
-
-```{r}
-#| echo: false
-#| tbl-cap: "Best Hyperparameters for the K-Nearest Neighbors Model"
-#| label: tbl-knn-hyper
-
-knn_select |> 
-  knitr::kable()
-```
-Based on @tbl-knn-hyper, the best model for the k-nearest neighbors model has tuned a value of (INSERT) for neighbors.
-
-```{r}
-#| echo: false
-#| tbl-cap: "Best Hyperparameters for the Boosted Tree Model"
-#| label: tbl-bt-hyper
-
-bt_select |> 
-  knitr::kable()
-```
-According to @tbl-bt-hyper, the best hyperparameters for the boosted tree model are (INSERT) for the number of randomly drawn candidate variables, (INSERT) for the minimum number of models, and a learn rate of approximately (INSERT).
-
-```{r}
-#| echo: false
-#| tbl-cap: "Best Hyperparameters for the Random Forest Model"
-#| label: tbl-rf-hyper
-
-rf_select |> 
-  knitr::kable()
-```
-Last of all, for the random forest model, the best hyperparameters for the random forest model, based on @tbl-rf-hyper, are (INSERT) for the number of randomly drawn candidate and (INSERT) for the minimum number of models.
-
-For the number of randomly drawn candidate variables in my random forest and boosted tree models, I had my range for tuning set to a maximum of 14, so it is likely that further tuning could be explored by increasing this value when setting tuning limits.
-
-After analyzing the best hyperparameters for the appropriate models, I compared the results of the models that used the feature engineered recipe to one another with the metric of RMSE.
-
-```{r}
-#| echo: false
-#| tbl-cap: "Comparison of RMSEs of Each Model"
-#| label: tbl-rmse-comparison
+#| tbl-cap: "RMSEs of Feature Engineered Recipe Trained Models"
+#| label: tbl-rmse-fe 
 
 engineered_final_table |> 
   knitr::kable()
 ```
 
+According to @tbl-rmse-fe, the best performing model using the kitchen sink recipe was the boosted tree model, with an RMSE of 0.3395575. It appears that the ordinary linear regression and random forest models made improvements in comparison to @tbl-rmse-baseline.
 
+Then, I found the best hyperparameters for the models that were tuned, based on the lowest RMSE found for each model that used the feature engineered recipes. Once again, for the null model and the ordinary linear regression model, there was no tuning of hyperparameters involved because they do not have any relevant hyperparameters to look at.
 
-Based on @tbl-rmse-comparison, the random forest model will act as the final model, as it it has the lowest RMSE value out of the six models, indicating lower error and therefore stronger accuracy. I was not surprised that the random forest model won because of its complexity relative to the other models, although I was surprised at how strong the ordinary linear regression performed, with an RMSE of 0.3661882, because I did not tune any parameters for it. I expected the models that involved tuning hyperparameters, such as the boosted tree, elastic net, and k-nearest neighbors model, to perform better than the ordinary linear regression model, although the ordinary linear regression model may have had a lower RMSE because I removed some categorical data, such as the color and whether or not the vehicle had gas, that I deemed to be disruptive to the model.
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the Elastic Net Model, Feature Engineered"
+#| label: tbl-elastic-hyper-fe
+
+elastic_select_1 |> 
+  knitr::kable(digits = c(15, 1, NA))
+```
+According to @tbl-elastic-hyper-fe, the best hyperparameters for the elastic net model with the feature engineered recipe is a penalty value of 0.01778279, and a mixture of 0.2, which are the exact same values as that of the best hyperparameters for the kitchen sink elastic net model in @tbl-elastic-hyper.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the K-Nearest Neighbors Model, Feature Engineered"
+#| label: tbl-knn-hyper-fe
+
+knn_select_1 |> 
+  knitr::kable()
+```
+Based on @tbl-knn-hyper-fe, the best model for the k-nearest neighbors model with the feature engineered recipe has tuned a value of 15 for neighbors, which is the same as the best hyperparameter for the kitchen sink k-nearest neighbors model in @tbl-knn-hyper, indicating that there is a general trend for more neighbors to produce a stronger model.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the Boosted Tree Model, Feature Engineered"
+#| label: tbl-bt-hyper-fe
+
+bt_select_1 |> 
+  knitr::kable()
+```
+According to @tbl-bt-hyper-fe, the best hyperparameters for the boosted tree model with the feature engineered recipe are 9 for the number of randomly drawn candidate variables, 5 for the minimum number of variables before a split, and a learn rate of approximately 0.0398107, which are the same best hyperparameter values for the boosted tree model with the kitchen sink recipe in @tbl-bt-hyper.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Best Hyperparameters for the Random Forest Model, Feature Engineered"
+#| label: tbl-rf-hyper-fe
+
+rf_select_1 |> 
+  knitr::kable()
+```
+Last of all, for the random forest model, the best hyperparameters for the random forest model with the kitchen sink recipe, based on @tbl-rf-hyper-fe, are 9 for the number of randomly drawn candidate variables and 2 for the minimum number of variables before a split, which are the same as in @tbl-rf-hyper.
 
 ## Final Model Selection
-(insert the combined table here and say which one is gonna be da final!!!!! and compare how well each does).
+After analyzing the best hyperparameters for the appropriate models, I compared the results of the models that used the feature engineered recipe to one another with the metric of RMSE.
 
+```{r}
+#| echo: false
+#| tbl-cap: "Comparison of RMSEs of Models using Both Recipes"
+#| label: tbl-rmse-comparison
 
+comparison_table |> 
+  knitr::kable()
+```
+Based on @tbl-rmse-comparison, it turns out that the boosted tree model using the kitchen sink recipe performed the best out of all the models, with an RMSE of 0.3387086 that slightly beat out the boosted tree model using the feature engineered recipe. I was not surprised that the boosted tree model won because of its complexity compared to other models and its ability to deal with nonlinear relationships well, but I was surprised that the kitchen sink recipe was the best because I thought the feature engineered aspects would have improved the model. I do think that the slight boost in performance from the kitchen sink recipe was due to the removal of two categorical variables in the feature engineered recipe in comparison to the kitchen sink recipe, meaning those variables might have had more value in creating accurate predictions than I initially thought. There are also interesting improvements for the ordinary linear regression model when comparing the feature engineered recipe and kitchen sink recipe, which may indicate that removing more categorical variables in the dataset can help the strength of the linear model due to removing aspects of nonlinearity. In conclusion, the model used for final model analysis will be the kitchen sink version of the boosted tree model.
 
 # Final Model Analysis
 
@@ -221,10 +273,12 @@ For future models,
 
 mention what did the best, what to do in the future, and also future insights/things to explore (research questions for the future)
 
-## References
+# References
 
 
-## Appendix {#sec-appendix}
+# Appendix {#sec-appendix}
+
+## Exploratory Data Analysis {#sec-data-exploration}
 I chose to explore the training data to see if there were any relationships between variables that would be important to note when building the recipe for the model that can affect the strength and performance of the model.
 
 ```{r}

@@ -18,15 +18,15 @@ registerDoMC(cores = num_cores)
 tidymodels_prefer()
 
 # load training data
-load(here("results/cars_split.rda"))
+load(here("data_splits/cars_split.rda"))
 
-# laod fits
-load(here("results/rf_fit_eng.rda"))
+# load fits
+load(here("results/tuned_bt.rda"))
 
 # finalize workflow ----
-final_wflow <- rf_fit_eng |> 
-  extract_workflow(rf_fit_eng) |>  
-  finalize_workflow(select_best(rf_fit_eng, metric = "rmse"))
+final_wflow <- tuned_bt |> 
+  extract_workflow(tuned_bt) |>  
+  finalize_workflow(select_best(tuned_bt, metric = "rmse"))
 
 # train final model ----
 # set seed
