@@ -4,6 +4,7 @@ This folder contains RDA files of results for the final project.
 
 ## RDA Files
 - `null_fit`: Contains fit of the baseline model, the null model, using kitchen sink recipe.
+- `null_fit_eng`: Contains fit of the baseline model, the null model, using feature engineered recipe.
 - `olr_lm_fit`: Contains fit of ordinary linear regression model using kitchen sink recipe.
 - `olr_lm_fit_eng`: Contains fit of ordinary linear regression model using feature engineered recipe for parametric models.
 - `rf_fit`: Contains fit of random forest model using tree based kitchen sink recipe.
@@ -14,4 +15,4 @@ This folder contains RDA files of results for the final project.
 - `tuned_elastic_eng`: Contains fit of elastic net model using feature engineered recipe for parametric models.
 - `tuned_bt`: Contains fit of boosted tree model using tree based kitchen sink recipe.
 - `tuned_bt_eng`: Contains fit of boosted tree model using feature engineered recipe for tree based models.
-- `final_fit` Contains fit of training dataset using the best model determined by analysis.
+- `final_fit` Contains fit of training dataset using the best model determined by lowest RMSE model.

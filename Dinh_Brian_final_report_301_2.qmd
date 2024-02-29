@@ -36,7 +36,6 @@ library(tidyverse)
 library(here)
 
 load(here("figures/data_exploration.rda"))
-load(here("figures/best_hyperparameters.rda"))
 load(here("figures/rmse_tables.rda"))
 load(here("figures/assess_final.rda"))
 load(here("figures/best_hyperparameters_1.rda"))
