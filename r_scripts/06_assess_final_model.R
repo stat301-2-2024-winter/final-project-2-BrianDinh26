@@ -31,7 +31,6 @@ final_predict_stats <- final_predict |>
   final_metrics(truth = price_usd, estimate = .pred) |> 
   rename(
     Metric = .metric,
-    Estimator = .estimator,
     Estimate = .estimate
   )
 

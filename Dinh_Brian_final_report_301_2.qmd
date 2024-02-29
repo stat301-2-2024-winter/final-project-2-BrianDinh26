@@ -43,6 +43,7 @@ load(here("figures/rmse_tables.rda"))
 load(here("figures/assess_final.rda"))
 load(here("figures/best_hyperparameters_1.rda"))
 load(here("figures/best_hyperparameters_2.rda"))
+load(here("figures/bt_autoplot.rda"))
 
 ```
 
@@ -188,7 +189,7 @@ Then, I found the best hyperparameters for the models that were tuned, based on 
 elastic_select_1 |> 
   knitr::kable(digits = c(15, 1, NA))
 ```
-According to @tbl-elastic-hyper-fe, the best hyperparameters for the elastic net model with the feature engineered recipe is a penalty value of 0.01778279, and a mixture of 0.2, which are the exact same values as that of the best hyperparameters for the kitchen sink elastic net model in @tbl-elastic-hyper.
+According to @tbl-elastic-hyper-fe, the best hyperparameters for the elastic net model with the feature engineered recipe is a penalty value of 0.01778279, and a mixture of 0.2, which are the exact same values as that of the best hyperparameters for the kitchen sink elastic net model in @tbl-elastic-hyper. For future reference, one may consider increasing the penalty as a means of increasing model performance.
 
 ```{r}
 #| echo: false
@@ -198,7 +199,7 @@ According to @tbl-elastic-hyper-fe, the best hyperparameters for the elastic net
 knn_select_1 |> 
   knitr::kable()
 ```
-Based on @tbl-knn-hyper-fe, the best model for the k-nearest neighbors model with the feature engineered recipe has tuned a value of 15 for neighbors, which is the same as the best hyperparameter for the kitchen sink k-nearest neighbors model in @tbl-knn-hyper, indicating that there is a general trend for more neighbors to produce a stronger model.
+Based on @tbl-knn-hyper-fe, the best model for the k-nearest neighbors model with the feature engineered recipe has tuned a value of 15 for neighbors, which is the same as the best hyperparameter for the kitchen sink k-nearest neighbors model in @tbl-knn-hyper, indicating that there is a general trend for more neighbors to produce a stronger model. For future models, one may increase the range of neighbors allowed for the model when tuning.
 
 ```{r}
 #| echo: false
@@ -208,7 +209,7 @@ Based on @tbl-knn-hyper-fe, the best model for the k-nearest neighbors model wit
 bt_select_1 |> 
   knitr::kable()
 ```
-According to @tbl-bt-hyper-fe, the best hyperparameters for the boosted tree model with the feature engineered recipe are 9 for the number of randomly drawn candidate variables, 5 for the minimum number of variables before a split, and a learn rate of approximately 0.0398107, which are the same best hyperparameter values for the boosted tree model with the kitchen sink recipe in @tbl-bt-hyper.
+According to @tbl-bt-hyper-fe, the best hyperparameters for the boosted tree model with the feature engineered recipe are 9 for the number of randomly drawn candidate variables, 5 for the minimum number of variables before a split, and a learn rate of approximately 0.0398107, which are the same best hyperparameter values for the boosted tree model with the kitchen sink recipe in @tbl-bt-hyper. In future explorations or analysis, the minimum number of variables before a split may be increased in order to increase performance due to the number of variables in this dataset.
 
 ```{r}
 #| echo: false
@@ -231,7 +232,18 @@ After analyzing the best hyperparameters for the appropriate models, I compared 
 comparison_table |> 
   knitr::kable()
 ```
-Based on @tbl-rmse-comparison, it turns out that the boosted tree model using the kitchen sink recipe performed the best out of all the models, with an RMSE of 0.3387086 that slightly beat out the boosted tree model using the feature engineered recipe. I was not surprised that the boosted tree model won because of its complexity compared to other models and its ability to deal with nonlinear relationships well, but I was surprised that the kitchen sink recipe was the best because I thought the feature engineered aspects would have improved the model. I do think that the slight boost in performance from the kitchen sink recipe was due to the removal of two categorical variables in the feature engineered recipe in comparison to the kitchen sink recipe, meaning those variables might have had more value in creating accurate predictions than I initially thought. There are also interesting improvements for the ordinary linear regression model when comparing the feature engineered recipe and kitchen sink recipe, which may indicate that removing more categorical variables in the dataset can help the strength of the linear model due to removing aspects of nonlinearity. In conclusion, the model used for final model analysis will be the kitchen sink version of the boosted tree model.
+Based on @tbl-rmse-comparison, it turns out that the boosted tree model using the kitchen sink recipe performed the best out of all the models, with an RMSE of 0.3387086 that slightly beat out the boosted tree model using the feature engineered recipe. I was not surprised that the boosted tree model won because of its complexity compared to other models and its ability to deal with nonlinear relationships well, but I was surprised that the kitchen sink recipe was the best because I thought the feature engineered aspects would have improved the model. I do think that the slight boost in performance from the kitchen sink recipe was due to the removal of two categorical variables in the feature engineered recipe in comparison to the kitchen sink recipe, meaning those variables might have had more value in creating accurate predictions than I initially thought. There are also interesting improvements for the ordinary linear regression model when comparing the feature engineered recipe and kitchen sink recipe, which may indicate that removing more categorical variables in the dataset can help the strength of the linear model due to removing aspects of nonlinearity. 
+
+```{r}
+#| echo: false
+#| fig-cap: "Comparison of Hyperparameters for Best Model"
+#| label: fig-rmse-best-hyp
+
+bt_autoplot
+```
+In @fig-rmse-best-hyp, it appears that the best RMSEs occur with a higher number of randomly selected predictors, a greater minimal node size, and a greater learning rate.
+
+In conclusion, the model used for final model analysis will be the kitchen sink version of the boosted tree model.
 
 # Final Model Analysis
 
@@ -244,7 +256,7 @@ After determining that the best model was the random forest model, I fit and tra
 final_predict_stats |> 
   knitr::kable()
 ```
-Based on @tbl-final-model-stats, the RMSE is 0.3639547, the mean average error (MAE) is 0.2485033, and the $R^2$ is 0.8778823. Although the RMSE is slightly higher than that of the RMSE for the random forest model as seen in @tbl-rmse-comparison, the RMSE is relatively lower than all the other models. Additionally, the MAE is quite low, indicating less error involved in the model. The value for $R^2$ indicates that approximately 87.78% of the results can be explained by the model, which is quite high. Next, I comapred the results of the predicted and actual values on a graph. (rmse penalizes outliers more)
+Based on @tbl-final-model-stats, the RMSE is 0.3403434, the mean average error (MAE) is 0.2315781, and the $R^2$ is 0.8904937 Although the RMSE is slightly higher than that of the RMSE for the random forest model as seen in @tbl-rmse-comparison, the RMSE is relatively lower than all the other models. Additionally, the MAE is quite low, indicating less error involved in the model. The value for $R^2$ indicates that approximately 87.78% of the results can be explained by the model, which is quite high. Next, I compared the results of the predicted and actual values on a graph.
 
 ```{r}
 #| echo: false
@@ -264,14 +276,12 @@ predict_vs_obs_plot_original
 ```
 Based on @fig-price-graph, there appears to be more variation between the actual prices and predicted prices. More specifically, there tends to be some prices that are much higher in reality in comparison to the predicted price, but for the majority of the results, the predicted and actual prices appear quite close to one another. 
 
-According to the results of @fig-log-price-graph and @fig-log-price-graph, I believe that it was justified to use a random forest model due to the strength of its predictive performance. Additionally, based on @tbl-rmse-comparison, the RMSE for the baseline model is much higher than that of the final model. Thus, I think the effort involved in creating the model made sense, as it allowed for more accurate predictions. I believe the random forest model performed the best because of its flexibility in handling nonlinear relationships, because there were many variables that did not immediately have noticeable correlations due to their nonlinearity when graphed and calculated.
+According to the results of @fig-log-price-graph and @fig-price-graph, I believe that it was justified to use a boosted tree model due to the strength of its predictive performance. Additionally, based on @tbl-rmse-comparison, the RMSE for the null model is much higher than that of the final model selected. Thus, I think the effort involved in creating the model made sense, as it allowed for more accurate predictions. I believe the boosted tree model performed the best because of its flexibility in handling nonlinear relationships, because there were many variables that did not immediately have noticeable correlations due to their nonlinearity when graphed and calculated. However, for future explorations, I believe having a recipe that is more deeply explored may allow for a stronger performance, because currently, the kitchen sink recipe with the boosted tree model performs the best.
 
 # Conclusions
-After working on training and creating my predictive models, I learned that the best model for predicting used car prices was the random forest model using a feature engineered recipe, with significant improvements upon the baseline null model. It appears that tree-based models perform well in this dataset due to its ability to deal with nonlinearity and have flexibility with its variables, as the used cars dataset I used had high levels of nonlinearity in its numeric variables. Using a feature engineered recipe allowed for stronger predictive ability in comparison to the baseline null model.
+After working on training and creating my predictive models, I learned that the best model for predicting used car prices was the boosted tree model using a kitchen sink recipe, with significant improvements upon the baseline null model. It appears that tree-based models perform well in this dataset due to its ability to deal with nonlinearity and have flexibility with its variables, as the used cars dataset I used had high levels of nonlinearity in its numeric variables. Although the feature engineered recipe allowed for stronger predictive ability for the ordinary linear regression and random forest model, the boosted tree model with the feature engineered recipe was actually slightly worse than the kitchen sink boosted tree model. It appears that for boosted tree models, having the greatest number of selected predictors only slightly increased performance, while greater learning rates and minimal node size greatly improved model performance.
 
-For future models,
-
-mention what did the best, what to do in the future, and also future insights/things to explore (research questions for the future)
+For future models, it may be beneficial to increase the minimal node size and learning rate ranges in order to increase performance. Additionally, for future recipes, possibly refrain from removing more categorical variables dude to the strength of tree based models when provided more categorical variable information. Possible research questions for the future would be to analyze what used cars are actually sold on such used cars websites and predict whether or not a car has been sold or not. Additionally, one may explore how used car prices compare to the current car market as well for newer models and see if the general prices of new cars affects how used cars are priced.
 
 # References
 

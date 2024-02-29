@@ -214,11 +214,15 @@ comparison_table <- bind_rows(table_null, table_null_2, table_olr, table_olr_eng
     Recipe = recipe
   )
 
+# autoplot for final model
+bt_autoplot <- autoplot(tuned_bt, metric = "rmse")
+
 # save out results
 save(pm_2_table, file = here("figures/pm_2_table.rda"))
 save(knn_select_2, elastic_select_2, bt_select_2, rf_select_2, file = here("figures/best_hyperparameters_2.rda"))
 save(knn_select_1, elastic_select_1, bt_select_1, rf_select_1, file = here("figures/best_hyperparameters_1.rda"))
 save(engineered_final_table, comparison_table, kitchen_sink_table, file = here("figures/rmse_tables.rda"))
+save(bt_autoplot, file = here("figures/bt_autoplot.rda"))
 
 # bizzarre results. we ball.
 
