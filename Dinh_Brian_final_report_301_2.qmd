@@ -1,5 +1,5 @@
 ---
-title: "Final Report on Price Prediction in Online Used Car Sales"
+title: "Final Report on Price Prediction Model for Online Used Car Sales"
 subtitle: |
   | Class: STAT 301-2, Winter 2024, Northwestern University
 author: "Brian Dinh"
@@ -26,9 +26,7 @@ from: markdown+emoji
 :::
 ```{r}
 #| echo: false
-#| label: library-load
-
-# note to self, use knitr::kable, not DT::datatable for captions.
+#| label: import
 
 # turn off scientific notation
 options(scipen=999)
@@ -153,7 +151,7 @@ Based on @tbl-knn-hyper, the best model for the k-nearest neighbors model with t
 bt_select_1 |> 
   knitr::kable()
 ```
-According to @tbl-bt-hyper, the best hyperparameters for the boosted tree model with the kitchen sink recipe are 9 for the number of randomly drawn candidate variables, 5 for the minimum number of variables before a split, and a learn rate of approximately 0.0398107.
+According to @tbl-bt-hyper, the best hyperparameters for the boosted tree model with the kitchen sink recipe are 9 for the number of randomly drawn candidate variables, 5 for the minimum number of variables before a split, and a learn rate of approximately 0.0398107, which
 
 ```{r}
 #| echo: false

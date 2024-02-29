@@ -29,6 +29,7 @@ final_predict <- predict(final_fit, new_data = cars_test) |>
 
 final_predict_stats <- final_predict |> 
   final_metrics(truth = price_usd, estimate = .pred) |> 
+  select(.metric, .estimate) |> 
   rename(
     Metric = .metric,
     Estimate = .estimate

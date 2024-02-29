@@ -1,0 +1,88 @@
+---
+title: "Executive Summary on Price Prediction Model for Online Used Car Sales"
+subtitle: |
+  | Class: STAT 301-2, Winter 2024, Northwestern University
+author: "Brian Dinh"
+date: today
+fig-cap-location: top
+format:
+  html:
+    toc: true
+    embed-resources: true
+    
+execute:
+  echo: true
+  warning: false
+number-sections: true
+from: markdown+emoji 
+---
+
+::: {.callout-tip icon="false"}
+## Github Repo Link
+[This is the link to the GitHub Repository.](https://github.com/stat301-2-2024-winter/final-project-2-BrianDinh26.git)
+:::
+
+```{r}
+#| echo: false
+#| label: import
+
+# turn off scientific notation
+options(scipen=999)
+
+# load in all figures used for this analysis.
+library(tidyverse)
+library(here)
+
+load(here("figures/rmse_tables.rda"))
+load(here("figures/assess_final.rda"))
+load(here("figures/bt_autoplot.rda"))
+```
+
+
+# Purpose
+The purpose of the report was to determine the best model for predicting the price of online used cars. The data^[Kirill Lepchenkov's Used Cars Dataset ([see website](https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog/data))] is from Kirill Lepchenkov on Kaggle, who scraped it from a used cars reselling website. Two recipes were compared in the process of determining the best model: a recipe with minimal changes and a recipe with feature engineering based on an exploratory data analysis.
+
+# Insights and Conclusions
+I found that the best model for predicting the price of used cars was the boosted tree model, which uses multiple regression trees that take in multiple variables and combines them, using the recipe with minimal changes, as it had the lowest root mean squared error of all the models, which is the average difference between values predicted by a model and the actual values. The differences between performance metrics can be seen in @tbl-rmse-comparison below.
+
+```{r}
+#| echo: false
+#| tbl-cap: "Comparison of RMSEs of Models using Both Recipes"
+#| label: tbl-rmse-comparison
+
+comparison_table |> 
+  knitr::kable()
+```
+
+Based on @fig-rmse-best-hyp, the best values for the hyperparameters for the model, which are aspects of the model that can be modified to change performance, are higher values of minimal node size, which is how many variables need to be looked at before moving onto the next tree in the model, and learning rate, which determines how much importance each new tree in the model has on the model.
+
+```{r}
+#| echo: false
+#| fig-cap: "Comparison of Hyperparameters for Best Model"
+#| label: fig-rmse-best-hyp
+
+bt_autoplot
+```
+
+When the final model was trained using the workflow from the boosted tree model with the recipe with minimal changes, the RMSE was slightly higher than that of the RMSE from the data originally trained on, with a value of 0.3403434, as seen in @tbl-final-model-stats. The mean average error was 0.2315781, meaning that the error was quite low in comparison to other models that were trained. Additionally, the $R^2$ is 0.8904937, which means that approximately 87.78% of the results can be explained by the model, which is quite high.
+```{r}
+#| echo: false
+#| tbl-cap: "Final Model Statistics"
+#| label: tbl-final-model-stats
+
+final_predict_stats |> 
+  knitr::kable()
+```
+
+Last of all, when the values of the observed and predicted prices are plotted on a graph, as in @fig-price-graph, the observed and predicted prices tend to track well together, with only slight underestimations of price for the higher priced datapoints. Overall though, creating a model allowed for a stronger predictive ability than that of an initial, baseline model with minimal information.
+
+```{r}
+#| echo: false
+#| fig-cap: "Observed vs. Predicted Prices (USD)"
+#| label: fig-price-graph
+
+predict_vs_obs_plot_original
+```
+
+# Future Questions and Explorations
+With this model in mind, one aspect to explore in the future with this dataset is increasing the minimal node size range in order to see at what point having a higher number range leaves diminishing returns relative to how long it takes to compute the model. Additionally, there is room to compare these used car prices in comparison to the new car market and see if the newer car prices can predict how used car prices change.
