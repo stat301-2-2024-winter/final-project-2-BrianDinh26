@@ -24,8 +24,8 @@ load(here("data_splits/cars_split.rda"))
 load(here("results/tuned_bt.rda"))
 
 # finalize workflow ----
-final_wflow <- tuned_bt |> 
-  extract_workflow(tuned_bt) |>  
+final_wflow <- tuned_bt |>
+  extract_workflow(tuned_bt) |>
   finalize_workflow(select_best(tuned_bt, metric = "rmse"))
 
 # train final model ----
@@ -35,4 +35,3 @@ final_fit <- fit(final_wflow, cars_train)
 
 # save out results
 save(final_fit, file = here("results/final_fit.rda"))
-
